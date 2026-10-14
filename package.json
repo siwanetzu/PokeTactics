@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
     "test": "node --experimental-strip-types --test src/engine.test.ts src/battle.test.ts src/traits.test.ts src/mana.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts src/effects.test.ts src/facing.test.ts src/sandbox.test.ts src/mixed.test.ts src/damage.test.ts src/balance.test.ts",
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
     "balance": "node --experimental-strip-types scripts/balance.ts",
     "audit:damage": "node --experimental-strip-types scripts/damage-audit.ts",
     "audit:run": "node --experimental-strip-types scripts/run-audit.ts",
