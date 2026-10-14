@@ -1,6 +1,7 @@
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {readdirSync} from 'node:fs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 process.chdir(root);
@@ -13,11 +14,36 @@ const credentialText=git(['credential','fill'],'protocol=https\nhost=github.com\
 const credential=Object.fromEntries(credentialText.split(/\r?\n/).filter(line=>line.includes('=')).map(line=>{const at=line.indexOf('=');return [line.slice(0,at),line.slice(at+1)];}));
 if(!credential.password)throw new Error('GitHub HTTPS authentication is unavailable.');
 const headers={Authorization:`Bearer ${credential.password}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'PokeTactics-publication'};
-async function api(route,method='GET',body){const response=await fetch(`https://api.github.com${route}`,{method,headers:{...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});if(response.status===404&&method==='GET')return null;if(!response.ok)throw new Error(`GitHub ${method} ${route} failed (${response.status}).`);return response.json();}
+async function api(route,method='GET',body){const response=await fetch(`https://api.github.com${route}`,{method,headers:{...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});if(response.status===404&&method==='GET')return null;if(!response.ok)throw new Error(`GitHub ${method} ${route} failed (${response.status}).`);return response.status===204?{}:response.json();}
 const profile=await api('/user'),owner=profile.login,route=`/repos/${owner}/${name}`;
 if(expectedOwner&&owner!==expectedOwner)throw new Error(`Authenticated account differs from requested owner ${expectedOwner}.`);
 console.log(`Authenticated GitHub owner: ${owner}`);
 let repo=await api(route);
+if(args.includes('--verify-pages')){
+ const pages=await api(`${route}/pages`),head=git(['rev-parse','HEAD']);
+ if(!pages?.html_url||pages.build_type!=='workflow')throw new Error('GitHub Pages is not configured for Actions yet.');
+ const runs=await api(`${route}/actions/workflows/pages.yml/runs?head_sha=${head}&per_page=10`);
+ if(!runs?.workflow_runs.some(run=>run.head_sha===head&&run.conclusion==='success'))throw new Error('Pages deployment for the prepared commit has not succeeded yet.');
+ const site=new URL(pages.html_url);
+ async function publicFile(relative){
+  const url=new URL(relative,site);if(url.origin!==site.origin||!url.pathname.startsWith(site.pathname))throw new Error('Unexpected deployed asset path.');
+  url.searchParams.set('verify',head);
+  const response=await fetch(url,{signal:AbortSignal.timeout(30000)});
+  if(!response.ok)throw new Error(`Deployed asset unavailable: ${relative} (${response.status}).`);
+  return response;
+ }
+ const stamp=await (await publicFile('deployment.json')).json();
+ if(stamp.commit!==head)throw new Error('Live site does not contain the prepared commit yet.');
+ const html=await (await publicFile('./')).text();
+ if(!html.includes('id="app"'))throw new Error('Live game entry point is missing.');
+ const assets=[...html.matchAll(/(?:src|href)="([^" ]+\.(?:js|css))"/g)].map(match=>match[1]);
+ if(!assets.some(asset=>asset.endsWith('.js')))throw new Error('Live game JavaScript entry point is missing.');
+ for(const asset of assets)await publicFile(asset);
+ const sprites=readdirSync(path.join(root,'public/sprites/animated')).filter(file=>file.endsWith('.gif'));
+ for(const sprite of sprites){const bytes=new Uint8Array(await (await publicFile(`sprites/animated/${sprite}`)).arrayBuffer());if(String.fromCharCode(...bytes.slice(0,3))!=='GIF')throw new Error(`Invalid live sprite: ${sprite}.`);}
+ console.log(`Playable site verified: ${site.href} (${head}; ${sprites.length} sprites)`);
+ process.exit(0);
+}
 if(!publish){console.log(repo?`Name already exists: ${owner}/${name} (${repo.private?'private':'public'})`:`Repository name available: ${owner}/${name}`);console.log('Access check only. No repository was created or changed.');process.exit(0);}
 if(notBefore){const earliest=Date.parse(notBefore);if(!Number.isFinite(earliest)||Date.now()<earliest)throw new Error(`Publication is not allowed before ${notBefore}.`);}
 if(git(['status','--porcelain']))throw new Error('Commit or resolve outstanding changes before publication.');
@@ -25,17 +51,26 @@ if(git(['branch','--show-current'])!=='main')throw new Error('Publication expect
 if(!process.env.npm_execpath)throw new Error('Invoke through npm run publish:github so validation uses the configured npm runtime.');
 for(const task of ['test','build']){const result=spawnSync(process.execPath,[process.env.npm_execpath,'run',task],{cwd:root,stdio:'inherit'});if(result.status!==0)throw new Error(`${task} failed; publication stopped.`);}
 const head=git(['rev-parse','HEAD']),remote=`https://github.com/${owner}/${name}.git`,origin=git(['remote','get-url','origin'],undefined,true);
+let alreadyPublished=false;
 if(origin&&origin!==remote)throw new Error('An unrelated origin is configured; publication stopped.');
 if(repo){
  if(repo.private)throw new Error('A private repository with this name already exists. Inspect it before changing visibility.');
  const remoteMain=git(['ls-remote',remote,'refs/heads/main']);
- if(remoteMain){if(remoteMain.split(/\s+/)[0]===head){if(!origin)git(['remote','add','origin',remote]);console.log(`Already published and verified: ${repo.html_url} (${head})`);process.exit(0);}throw new Error('Existing main contains different history. No history was overwritten.');}
- if(git(['ls-remote',remote]))throw new Error('Existing repository is not empty; publication stopped.');
+ if(remoteMain){if(remoteMain.split(/\s+/)[0]===head)alreadyPublished=true;else throw new Error('Existing main contains different history. No history was overwritten.');}
+ if(!alreadyPublished&&git(['ls-remote',remote]))throw new Error('Existing repository is not empty; publication stopped.');
 }else repo=await api('/user/repos','POST',{name,description:'Pokémon autobattler with seeded combat, trainer leagues, items and an island arena',private:false,auto_init:false});
 if(!origin)git(['remote','add','origin',remote]);
-git(['push','-u','origin','main']);
+if(!alreadyPublished)git(['push','-u','origin','main']);
 if(repo.default_branch!=='main')await api(route,'PATCH',{default_branch:'main'});
 const verified=await api(route),remoteHead=git(['ls-remote','origin','refs/heads/main']);
 if(verified.private||remoteHead.split(/\s+/)[0]!==head)throw new Error('Public visibility or published commit could not be verified.');
 console.log(`Published and verified: ${verified.html_url}`);
 console.log(`Commit: ${head}`);
+// Enable Pages after the initial push, then dispatch explicitly so a first-push
+// workflow racing with setup cannot leave the game without a deployment.
+const pages=await api(`${route}/pages`);
+if(!pages)await api(`${route}/pages`,'POST',{build_type:'workflow',source:{branch:'main',path:'/'}});
+else if(pages.build_type!=='workflow')await api(`${route}/pages`,'PUT',{build_type:'workflow'});
+await api(`${route}/actions/workflows/pages.yml/dispatches`,'POST',{ref:'main'});
+console.log(`Pages deployment requested: https://${owner}.github.io/${name}/`);
+console.log('Verify completion with npm run publish:github -- --owner '+owner+' --verify-pages. A deployment request is not live-site verification.');

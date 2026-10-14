@@ -2,6 +2,8 @@
 
 A browser-based Pokémon autobattler inspired by Teamfight Tactics. Build a team, combine copies, equip items, scout seven bot trainers and reposition on a hex battlefield to become the last trainer standing.
 
+**[Play PokeTactics in your browser](https://siwanetzu.github.io/PokeTactics/)** — no installation required. The first deployment is scheduled with repository publication at 6pm London time on 14 October 2026; the link becomes playable once GitHub finishes deployment.
+
 ![PokeTactics live gameplay](docs/images/gameplay.gif)
 
 A short recording of a live browser battle, showing movement, attacks and signature abilities.
@@ -71,4 +73,4 @@ npm run audit:mixed
 
 The current suite contains 90 tests. Full-match audits check legal purchases, gold, deployment caps, the shared pool, exclusive tiles and independent replay checksums. Audit output is written to ignored `artifacts/` files. Matchup results are composition benchmarks; they do not establish universal win rates.
 
-This is a local fan prototype with bot opponents. Online multiplayer and hosted deployment are future work. Pokémon and its artwork belong to their respective rights holders; see [CREDITS.md](CREDITS.md).
+This is a fan prototype with bot opponents and browser-local saves. Online multiplayer is future work. Pokémon and its artwork belong to their respective rights holders; see [CREDITS.md](CREDITS.md).
