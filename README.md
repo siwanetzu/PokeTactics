@@ -50,7 +50,7 @@ npm run preview
 
 Progress saves in this browser. Use `?test-run=1` for a separate QA match.
 
-On a phone, tap a Pokémon then a highlighted tile to move it. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items**, choose an item, then tap your Pokémon. Swipe the bench or shop to reach the remaining slots/offers. Short screens can scroll vertically, and landscape puts team-building controls beside the arena.
+On a phone, tap a Pokémon then a highlighted tile to move it, or drag it directly. Swipe the bench sideways to browse; drag a benched Pokémon vertically onto the board. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items** and drag an item onto your Pokémon, or choose it then tap a target. Swipe the shop to browse without buying. Short screens can scroll vertically, and landscape puts team-building controls beside the arena.
 
 ## Documentation
 
@@ -73,6 +73,6 @@ npm run audit:formations
 npm run audit:mixed
 ```
 
-The current suite contains 90 tests. Full-match audits check legal purchases, gold, deployment caps, the shared pool, exclusive tiles and independent replay checksums. Audit output is written to ignored `artifacts/` files. Matchup results are composition benchmarks; they do not establish universal win rates.
+The current suite contains 94 tests. Full-match audits check legal purchases, gold, deployment caps, the shared pool, exclusive tiles and independent replay checksums. Audit output is written to ignored `artifacts/` files. Matchup results are composition benchmarks; they do not establish universal win rates.
 
 This is a fan prototype with bot opponents and browser-local saves. Online multiplayer is future work. Pokémon and its artwork belong to their respective rights holders; see [CREDITS.md](CREDITS.md).

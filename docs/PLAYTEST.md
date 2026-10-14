@@ -44,6 +44,23 @@ Inspected the published game at a 390 × 844 viewport and found small bench targ
 
 Checked the production preview at 360 × 640, 390 × 844, 430 × 932 and 844 × 390 browser viewport sizes. Verified purchasing, highlighted-tile deployment, bench transfer, inspection, synergy details, selecting/equipping an item with the drawer closing, and a battle ending in victory followed by normal next-round preparation. No page-wide horizontal overflow or browser warnings/errors were observed. These are browser screen-size checks and tap-style interactions, not tests on physical iOS/Android devices. The 90 tests and production build passed.
 
+## Trusted touch gesture check
+
+With the user's approval, exercised actual Chromium touch input through Playwright/CDP on the production preview at 390 × 844 (`isMobile` and `hasTouch` enabled), rather than mouse clicks at phone size. Confirmed native horizontal bench/shop panning without unit, inventory or gold changes; vertical reserve deployment; board-to-board dragging; item equipping; cancelled item/unit drags preserving state; and dragging back to the bench. The check starts a fresh isolated browser context and never touches personal browser saves. Browser runtime errors remained empty.
+
+Fixed gesture arbitration before pointer capture, the global pressed-button transform shifting sprite hitboxes, item-drawer obstruction during dragging, drag-follow-up click suppression, and selection cleanup after cancellation. Item-origin gestures use `touch-action: none`; bench-origin horizontal pans remain native scrolling. Four gesture policy tests bring the suite to 94 tests. The production build and full suite passed.
+
+Repeat locally with Google Chrome installed:
+
+```sh
+npm run build
+npm run preview -- --port 5175 --base /PokeTactics/
+# In a second terminal:
+npm run test:touch
+```
+
+The optional check records screenshots, frame timing and state assertions under ignored `artifacts/touch-tests/`. The delivered `artifacts/mobile-touch-controls.gif` is an approximately 12-second recording of these trusted touch gestures, with a test caption and touch-position indicator. Chromium touch emulation is not physical iOS/Android hardware testing.
+
 ## README clip
 
 `docs/images/gameplay.gif` is a real browser recording of an opening wild battle: 28 frames, approximately eight seconds, 960 × 540 pixels and about 1.2 MB. It shows movement, ordinary attacks, signature effects and the round result. The GIF uses a shared palette and was visually checked across its opening, ability impacts and ending.

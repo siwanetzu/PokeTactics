@@ -1,4 +1,6 @@
 #mobile-item-toggle,#mobile-unit-actions{display:none}
+/* A generic button press must not replace the sprite's positioning transform. */
+button.board-unit:not(:disabled):active{transform:translate(-50%,-83%) scale(var(--unit-scale))}
 #placement-grid{position:absolute;inset:0;z-index:5;pointer-events:none}
 #placement-grid button{position:absolute;transform:translate(-50%,-50%);border:1px solid #d8f6af;background:#bbef8e26;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);pointer-events:auto;cursor:pointer}
 button{touch-action:manipulation}
@@ -28,7 +30,7 @@ button{touch-action:manipulation}
  #arena-flyout{width:calc(100% - 20px);left:10px;transform:none;top:155px;max-height:calc(100dvh - 180px);padding:16px;font-size:13px}#arena-flyout p{font-size:13px}#arena-flyout .icon-button{width:44px;height:44px}#arena-flyout h2{font-size:26px}
  .result{width:calc(100% - 24px);left:12px;transform:translateY(-50%);padding:20px;max-height:calc(100dvh - 40px);overflow:auto}.result button{height:44px;font-size:13px}.result p{font-size:12px}.item-reward small{font-size:11px}
  .modal-card{padding:24px 16px}.modal-card p,.setting-row{font-size:13px}.modal-close,.top-actions .icon-button{width:44px;height:44px}.top-actions{width:205px;right:10px;top:58px}
- #toast{max-width:calc(100% - 24px);font-size:12px;bottom:195px}.board-unit.ally{touch-action:none}.bench-slot.occupied{touch-action:pan-x}#item-tray .item-icon{touch-action:pan-y}
+ #toast{max-width:calc(100% - 24px);font-size:12px;bottom:195px}.board-unit.ally{touch-action:none}.bench-slot.occupied{touch-action:pan-x}#item-tray .item-icon{touch-action:none}
 }
 @media(min-width:601px) and (max-width:1000px) and (max-height:520px){
  .game-shell{height:100dvh;min-height:480px}.arena{right:40%;bottom:0}.arena #battle-surface{top:132px;bottom:54px}

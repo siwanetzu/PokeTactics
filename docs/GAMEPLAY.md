@@ -37,7 +37,7 @@ Between battles, drag an item onto an owned board or bench Pokémon, or select a
 
 ## Phone controls
 
-Portrait phones use a wider battlefield, a horizontal synergy strip, a scrolling bench/shop and an item drawer. Tap a Pokémon and then one of the highlighted tiles to position it. Use the selection bar to inspect, return to bench, sell or cancel; equipped items still return to the bag when selling. Tap a synergy for its bonuses and contributors. Item selection closes the drawer so targets stay unobstructed. Short screens allow vertical scrolling; landscape uses a battlefield/controls split. Touch swipes scroll bench/shop rather than requiring precise drag gestures.
+Portrait phones use a wider battlefield, a horizontal synergy strip, a scrolling bench/shop and an item drawer. Tap a Pokémon and then one of the highlighted tiles to position it. Use the selection bar to inspect, return to bench, sell or cancel; equipped items still return to the bag when selling. Tap a synergy for its bonuses and contributors. Item selection closes the drawer so targets stay unobstructed. Short screens allow vertical scrolling; landscape uses a battlefield/controls split. Sideways bench swipes browse without moving Pokémon; vertical bench gestures drag onto the board. Board Pokémon and items support direct touch dragging. Item dragging closes the drawer so it cannot cover the target. Shop swipes browse without buying. Cancelled gestures preserve units and items; tap-to-position remains available.
 
 ## League rounds
 
