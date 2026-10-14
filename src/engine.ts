@@ -55,7 +55,8 @@ export function roll(g:Game,rng=Math.random,peers?:PoolPeer[]) {
   for(const s of candidates){copy-=remainingCopies(g,s.id,true,peers);if(copy<0){pick=s.id;break;}}g.shop.push(pick);
  }
 }
-export function sell(g:Game,uid:number){const u=g.units.find(u=>u.uid===uid);if(!u)return 0;const price=species(u.species).cost*Math.pow(3,u.star-1);g.gold+=price;returnEquipment(g,u);g.units=g.units.filter(v=>v!==u);return price;}
+export function unitSaleValue(u:Unit){return species(u.species).cost*Math.pow(3,u.star-1);}
+export function sell(g:Game,uid:number){const u=g.units.find(u=>u.uid===uid);if(!u)return 0;const price=unitSaleValue(u);g.gold+=price;returnEquipment(g,u);g.units=g.units.filter(v=>v!==u);return price;}
 
 export function merge(g:Game) {let changed=true;while(changed){changed=false;for(const u of g.units){if(u.star>=3)continue;const copies=g.units.filter(v=>v.species===u.species&&v.star===u.star);if(copies.length>=3){const keep=copies.find(v=>v.board)||copies[0];const remove=copies.filter(v=>v!==keep).slice(0,2);keep.star++;mergeEquipment(g,keep,remove);g.units=g.units.filter(v=>!remove.includes(v));changed=true;break;}}}}
 export function buy(g:Game,index:number,peers?:PoolPeer[]):string {const id=g.shop[index];if(!id)return 'This slot is sold out.';const s=species(id);if(remainingCopies(g,id,false,peers)<1)return 'No copies remain in the shared pool.';if(g.gold<s.cost)return 'Not enough gold.';const copies=g.units.filter(u=>u.species===id&&u.star===1);const slot=Array.from({length:9},(_,i)=>i).find(i=>!g.units.some(u=>!u.board&&u.slot===i));if(slot===undefined&&copies.length<2)return 'Your bench is full.';g.gold-=s.cost;g.shop[index]=null;g.units.push({uid:g.nextId++,species:id,star:1,slot:slot??0,board:false});merge(g);return '';}
