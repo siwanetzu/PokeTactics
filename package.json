@@ -4,15 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && vite build",
-    "test": "node --experimental-strip-types --test src/engine.test.ts src/battle.test.ts src/traits.test.ts src/mana.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts src/effects.test.ts src/facing.test.ts src/sandbox.test.ts src/mixed.test.ts src/damage.test.ts src/balance.test.ts",
     "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "test": "node --experimental-strip-types --test src/engine.test.ts src/effects.test.ts src/battle.test.ts src/traits.test.ts src/balance.test.ts src/sandbox.test.ts src/damage.test.ts src/mana.test.ts src/mixed.test.ts src/facing.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts",
     "preview": "vite preview --host 127.0.0.1",
     "balance": "node --experimental-strip-types scripts/balance.ts",
     "audit:damage": "node --experimental-strip-types scripts/damage-audit.ts",
     "audit:run": "node --experimental-strip-types scripts/run-audit.ts",
     "audit:formations": "node --experimental-strip-types scripts/formation-counters.ts",
-    "audit:mixed": "node --experimental-strip-types scripts/mixed-audit.ts"
+    "audit:mixed": "node --experimental-strip-types scripts/mixed-audit.ts",
+    "publish:github": "node scripts/publish-github.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
