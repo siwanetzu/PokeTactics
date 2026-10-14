@@ -19,3 +19,9 @@ test('mouse bench drags preserve desktop movement in every direction',()=>{
  assert.equal(gestureIntent('mouse','bench',0,40),'drag');
  assert.equal(gestureIntent('mouse','bench',5,0),'pending');
 });
+test('landscape reserves pan vertically and deploy with horizontal drags',()=>{
+ assert.equal(gestureIntent('touch','bench',12,-45,'y'),'scroll');
+ assert.equal(gestureIntent('touch','bench',12,45,'y'),'scroll');
+ assert.equal(gestureIntent('touch','bench',-45,12,'y'),'drag');
+ assert.equal(gestureIntent('touch','bench',45,12,'y'),'drag');
+});

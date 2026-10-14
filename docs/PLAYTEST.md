@@ -61,6 +61,12 @@ npm run test:touch
 
 The optional check records screenshots, frame timing and state assertions under ignored `artifacts/touch-tests/`. The delivered `artifacts/mobile-touch-controls.gif` is an approximately 12-second recording of these trusted touch gestures, with a test caption and touch-position indicator. Chromium touch emulation is not physical iOS/Android hardware testing.
 
+## Landscape-first phone play
+
+The user's preferred phone orientation is now landscape. Portrait shows a rotate prompt, blocks game input and pauses simulation without losing progress. Landscape uses the full available height, with the battlefield left and reserves/shop right. Reserves pan vertically so sideways deployment remains a separate gesture.
+
+The trusted-touch check now starts in portrait, verifies the prompt, rotates into 844 × 390, and runs the complete drag/swipe regression there. It also checks 667 × 375 and 932 × 430 for page overflow, rotates an active battle into portrait to confirm time is frozen, then resumes in landscape and verifies battle completion. The gesture suite includes vertical-reserve arbitration, bringing the unit suite to 95 tests. This remains Chromium emulation rather than physical-device testing.
+
 ## README clip
 
 `docs/images/gameplay.gif` is a real browser recording of an opening wild battle: 28 frames, approximately eight seconds, 960 × 540 pixels and about 1.2 MB. It shows movement, ordinary attacks, signature effects and the round result. The GIF uses a shared palette and was visually checked across its opening, ability impacts and ending.

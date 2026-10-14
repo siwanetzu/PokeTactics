@@ -2,7 +2,7 @@
 
 A browser-based Pokémon autobattler inspired by Teamfight Tactics. Build a team, combine copies, equip items, scout seven bot trainers and reposition on a hex battlefield to become the last trainer standing.
 
-**[Play PokeTactics in your browser](https://siwanetzu.github.io/PokeTactics/)** — no installation required. Phone layouts support tapping Pokémon and highlighted tiles, scrolling the bench/shop, and equipping from the Items drawer.
+**[Play PokeTactics in your browser](https://siwanetzu.github.io/PokeTactics/)** — no installation required. Phone play uses landscape: rotate your phone to play. Portrait pauses the match and shows a rotate prompt.
 
 ![PokeTactics live gameplay](docs/images/gameplay.gif)
 
@@ -50,7 +50,7 @@ npm run preview
 
 Progress saves in this browser. Use `?test-run=1` for a separate QA match.
 
-On a phone, tap a Pokémon then a highlighted tile to move it, or drag it directly. Swipe the bench sideways to browse; drag a benched Pokémon vertically onto the board. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items** and drag an item onto your Pokémon, or choose it then tap a target. Swipe the shop to browse without buying. Short screens can scroll vertically, and landscape puts team-building controls beside the arena.
+On a phone, tap a Pokémon then a highlighted tile to move it, or drag it directly. Swipe the reserves vertically to browse; drag a benched Pokémon sideways onto the board. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items** and drag an item onto your Pokémon, or choose it then tap a target. Swipe the shop to browse without buying. The landscape layout puts team-building controls beside the arena and fits common phone screens without page scrolling.
 
 ## Documentation
 
@@ -73,6 +73,6 @@ npm run audit:formations
 npm run audit:mixed
 ```
 
-The current suite contains 94 tests. Full-match audits check legal purchases, gold, deployment caps, the shared pool, exclusive tiles and independent replay checksums. Audit output is written to ignored `artifacts/` files. Matchup results are composition benchmarks; they do not establish universal win rates.
+The current suite contains 95 tests. Full-match audits check legal purchases, gold, deployment caps, the shared pool, exclusive tiles and independent replay checksums. Audit output is written to ignored `artifacts/` files. Matchup results are composition benchmarks; they do not establish universal win rates.
 
 This is a fan prototype with bot opponents and browser-local saves. Online multiplayer is future work. Pokémon and its artwork belong to their respective rights holders; see [CREDITS.md](CREDITS.md).
