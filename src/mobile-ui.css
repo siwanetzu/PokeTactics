@@ -1,0 +1,41 @@
+#mobile-item-toggle,#mobile-unit-actions{display:none}
+#placement-grid{position:absolute;inset:0;z-index:5;pointer-events:none}
+#placement-grid button{position:absolute;transform:translate(-50%,-50%);border:1px solid #d8f6af;background:#bbef8e26;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);pointer-events:auto;cursor:pointer}
+button{touch-action:manipulation}
+@media(max-width:600px), (max-width:1000px) and (max-height:520px){
+ .game-shell{--dock-width:100%;--shop-height:182px;--bench-height:52px;min-height:720px;height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+ .arena{bottom:292px}.arena #battle-surface{top:147px}
+ .topbar .brand{top:12px;font-size:15px;padding:9px 14px}.brand small{font-size:6px}
+ #scene-menu{height:44px;width:44px;right:10px;top:10px}
+ .round-bar{top:65px;width:calc(100% - 24px);max-width:none;height:31px;left:12px;transform:none}.round-title small{font-size:9px}.round-title strong{font-size:11px}
+ .arena-traits{left:8px;right:8px;top:103px;width:auto}.arena-traits .trainer{left:10px;top:12px;width:60px;height:40px}
+ #synergies{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:2px 1px 5px;scrollbar-width:thin;touch-action:pan-x}
+ .arena-traits .synergy{flex:0 0 98px;width:98px;min-height:38px;height:38px;margin:0;gap:5px}.arena-traits .synergy-title strong{font-size:10px}.arena-traits .synergy-icon{width:22px;height:22px}.arena-traits .synergy-count{font-size:10px}.synergy-details{display:none!important}
+ .arena-trainers{display:none}#economy-guide{display:none}#sell{display:none}
+ .arena .capacity{right:12px;bottom:6px;font-size:12px;padding:4px 8px;pointer-events:none}
+ .bench-bar{width:calc(100% - 16px);left:8px;transform:none;bottom:192px;height:52px;gap:7px}
+ .bench{display:flex;overflow-x:auto;overflow-y:hidden;padding:2px;gap:5px;scroll-snap-type:x proximity;touch-action:pan-x;scrollbar-width:none}.bench::-webkit-scrollbar,.shop-cards::-webkit-scrollbar{display:none}
+ .bench-bar .bench-slot{flex:0 0 46px;width:46px;height:46px;min-height:46px;scroll-snap-align:start}.bench-slot .sprite{width:38px;height:37px;margin-top:5px}.bench-slot .stars{font-size:9px}
+ .bench-bar .battle-button{width:87px;min-width:87px;flex-basis:87px;height:50px;font-size:15px}
+ .shop{width:calc(100% - 16px);left:8px;transform:none;height:182px;bottom:6px;padding:8px}
+ .shop-header{height:32px;margin-bottom:5px;justify-content:flex-end;padding-right:48px}.shop-controls .level{position:static;width:90px;height:40px;flex:0 0 90px}.level>span{width:30px;height:30px;font-size:18px}.level strong,.level small{font-size:9px}.wallet{height:30px}.wallet strong{font-size:21px}.lock-button{width:44px;height:32px;top:8px;right:8px}.shop-title{display:none}
+ .shop-content{display:flex;flex-direction:column;height:128px;gap:6px}.shop-controls{flex:0 0 44px;width:100%;display:flex;flex-direction:row;gap:6px}.shop-controls button{height:44px;font-size:12px;width:auto;padding:0 6px}.shop-controls button small{font-size:12px}
+ .shop-cards{display:flex;overflow-x:auto;overflow-y:hidden;gap:6px;scroll-snap-type:x proximity;touch-action:pan-x;scrollbar-width:none;min-height:78px}.shop-card{flex:0 0 86px;width:86px;height:78px;scroll-snap-align:start}.shop-card .sprite{width:57px;height:49px}.card-bottom strong{font-size:11px}.card-bottom>span{font-size:12px}.card-types .type-icon{width:12px;height:12px;font-size:8px}
+ #mobile-item-toggle{display:block;position:absolute;bottom:248px;left:10px;height:44px;min-width:104px;padding:0 12px;border:1px solid #d6bd7f;border-radius:7px;background:#24374f;color:#ffe7b2;font-size:13px;z-index:155}
+ #equipment-hud{display:none;left:10px;bottom:298px;width:230px;max-width:230px;max-height:calc(100% - 165px);overflow-y:auto;padding:12px;z-index:180}#equipment-hud.mobile-open{display:flex}
+ #equipment-hud .equipment-heading b{font-size:13px}#item-help{width:44px;height:44px;font-size:18px}.item-source,#equipment-hint{font-size:12px}#item-tray{grid-template-columns:repeat(4,44px);gap:8px;max-height:170px}#item-tray .item-icon{width:44px;height:44px;font-size:22px}#item-detail{font-size:13px}#item-detail small,#item-detail p{font-size:12px}#unit-equipment{display:flex;font-size:12px}
+ #mobile-unit-actions{display:flex;position:absolute;bottom:248px;left:122px;right:8px;min-height:44px;gap:4px;align-items:center;z-index:155;font-size:11px;color:#e7eddb}#mobile-unit-actions>span{flex:1;min-width:0}#mobile-unit-actions button{height:44px;min-width:36px;padding:0 5px;background:#273c54;border:1px solid #9aabb1;color:#ffe7ac;border-radius:5px;font-size:11px}
+ #arena-flyout{width:calc(100% - 20px);left:10px;transform:none;top:155px;max-height:calc(100dvh - 180px);padding:16px;font-size:13px}#arena-flyout p{font-size:13px}#arena-flyout .icon-button{width:44px;height:44px}#arena-flyout h2{font-size:26px}
+ .result{width:calc(100% - 24px);left:12px;transform:translateY(-50%);padding:20px;max-height:calc(100dvh - 40px);overflow:auto}.result button{height:44px;font-size:13px}.result p{font-size:12px}.item-reward small{font-size:11px}
+ .modal-card{padding:24px 16px}.modal-card p,.setting-row{font-size:13px}.modal-close,.top-actions .icon-button{width:44px;height:44px}.top-actions{width:205px;right:10px;top:58px}
+ #toast{max-width:calc(100% - 24px);font-size:12px;bottom:195px}.board-unit.ally{touch-action:none}.bench-slot.occupied{touch-action:pan-x}#item-tray .item-icon{touch-action:pan-y}
+}
+@media(min-width:601px) and (max-width:1000px) and (max-height:520px){
+ .game-shell{height:100dvh;min-height:480px}.arena{right:40%;bottom:0}.arena #battle-surface{top:132px;bottom:54px}
+ .topbar .brand{left:30%;top:8px;padding:5px 12px;font-size:14px}.round-bar{top:53px;width:calc(60% - 24px)}.arena-traits{right:8px;top:90px}.arena-traits .trainer{top:8px}
+ .bench-bar{left:calc(60% + 8px);right:8px;width:auto;top:56px;bottom:auto;height:182px;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+ .bench{display:grid;grid-template-columns:repeat(5,minmax(44px,1fr));grid-auto-rows:46px;flex:1;overflow:auto;gap:4px}.bench-bar .bench-slot{width:100%;min-width:44px}.bench-bar .battle-button{height:44px;width:100%;min-width:0;flex:0 0 44px}
+ .shop{left:calc(60% + 8px);right:8px;width:auto;bottom:6px;height:180px}.shop-controls .level{flex-basis:64px;width:64px}.level strong{display:none}.shop-controls button{font-size:10px}.shop-card{flex-basis:84px}
+ #mobile-item-toggle{bottom:6px}#mobile-unit-actions{bottom:6px;right:calc(40% + 8px)}#equipment-hud{bottom:58px;max-height:calc(100% - 110px)}
+ #arena-flyout{top:55px;max-height:calc(100dvh - 75px)}.arena .capacity{bottom:51px;right:10px}.result{max-height:calc(100dvh - 24px)}#toast{bottom:10px}
+}

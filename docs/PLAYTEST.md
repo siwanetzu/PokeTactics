@@ -38,6 +38,12 @@ Victory screenshot: ignored `artifacts/production-preview-victory.jpg`. No game 
 
 Verified the new item bag in development and production previews: eligible board/bench targets highlight on selection, bench Abra receives Wise Lens, Squirtle receives Vitality Seed and displays 734 HP, Wise Lens plus Vitality Seed crafts Miracle Seed, and Oddish equips that completed item. A wild-round loss still names and adds Vitality Seed to the bag. Combat disables item controls; advancing restores them, Escape clears selection/highlights, and the in-arena help opens and closes. No browser warnings/errors were recorded. The 90 existing tests and production build passed. The physical pointer-drag test remains unverified because launching the separate browser for that check was blocked by policy. Screenshots remain in ignored `artifacts/item-bag-ui.jpg` and `artifacts/item-reward-ui.jpg`.
 
+## Mobile layout update
+
+Inspected the published game at a 390 × 844 viewport and found small bench targets, tiny shop text and wasted battlefield height. The update enlarges the phone battlefield, gives bench slots 46-pixel targets, makes the shop and bench horizontally scrollable, adds an item drawer and explicit tap-to-position tiles, and exposes inspection, bench transfer, selling, cancellation and synergy details through tap controls. Landscape separates the arena from team-building controls. Short screens can scroll vertically rather than clipping controls.
+
+Checked the production preview at 360 × 640, 390 × 844, 430 × 932 and 844 × 390 browser viewport sizes. Verified purchasing, highlighted-tile deployment, bench transfer, inspection, synergy details, selecting/equipping an item with the drawer closing, and a battle ending in victory followed by normal next-round preparation. No page-wide horizontal overflow or browser warnings/errors were observed. These are browser screen-size checks and tap-style interactions, not tests on physical iOS/Android devices. The 90 tests and production build passed.
+
 ## README clip
 
 `docs/images/gameplay.gif` is a real browser recording of an opening wild battle: 28 frames, approximately eight seconds, 960 × 540 pixels and about 1.2 MB. It shows movement, ordinary attacks, signature effects and the round result. The GIF uses a shared palette and was visually checked across its opening, ability impacts and ending.

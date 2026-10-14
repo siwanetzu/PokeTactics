@@ -2,7 +2,7 @@
 
 A browser-based Pokémon autobattler inspired by Teamfight Tactics. Build a team, combine copies, equip items, scout seven bot trainers and reposition on a hex battlefield to become the last trainer standing.
 
-**[Play PokeTactics in your browser](https://siwanetzu.github.io/PokeTactics/)** — no installation required. The first deployment is scheduled with repository publication at 6pm London time on 14 October 2026; the link becomes playable once GitHub finishes deployment.
+**[Play PokeTactics in your browser](https://siwanetzu.github.io/PokeTactics/)** — no installation required. Phone layouts support tapping Pokémon and highlighted tiles, scrolling the bench/shop, and equipping from the Items drawer.
 
 ![PokeTactics live gameplay](docs/images/gameplay.gif)
 
@@ -49,6 +49,8 @@ npm run preview
 | Cancel selection or an arena overlay | Escape |
 
 Progress saves in this browser. Use `?test-run=1` for a separate QA match.
+
+On a phone, tap a Pokémon then a highlighted tile to move it. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items**, choose an item, then tap your Pokémon. Swipe the bench or shop to reach the remaining slots/offers. Short screens can scroll vertically, and landscape puts team-building controls beside the arena.
 
 ## Documentation
 

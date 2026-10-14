@@ -35,6 +35,10 @@ The item bag sits beside the bench inside the arena and shows your unequipped it
 
 Between battles, drag an item onto an owned board or bench Pokémon, or select an item and click a highlighted Pokémon. The bag shows its stats and previews an automatic combination when targeting a unit with a component. Full units are marked unless a valid combination frees the required slot. Equipped item badges and the selected Pokémon's slot count show where items went. Equipment locks during combat; Escape cancels selection.
 
+## Phone controls
+
+Portrait phones use a wider battlefield, a horizontal synergy strip, a scrolling bench/shop and an item drawer. Tap a Pokémon and then one of the highlighted tiles to position it. Use the selection bar to inspect, return to bench, sell or cancel; equipped items still return to the bag when selling. Tap a synergy for its bonuses and contributors. Item selection closes the drawer so targets stay unobstructed. Short screens allow vertical scrolling; landscape uses a battlefield/controls split. Touch swipes scroll bench/shop rather than requiring precise drag gestures.
+
 ## League rounds
 
 Three wild warmups lead into stage 2. Later stages contain three trainer battles, a shared draft, two more trainer battles and a wild round. Lower-health trainers draft first. Draft units are free and come from the shared pool; make bench space or combine an upgrade before picking.
