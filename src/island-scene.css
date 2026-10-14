@@ -78,3 +78,8 @@
 .shop.shop-selling{border-color:#e6c279;box-shadow:0 0 0 3px #24334a,0 0 20px #ecc36966}.shop.shop-selling>:not(#shop-sell-overlay){opacity:.16;filter:grayscale(1);pointer-events:none}#shop-sell-overlay{position:absolute;inset:0;background:#28303dd9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;border-radius:5px;pointer-events:none;z-index:5;color:#f6ebd4;text-align:center;padding:10px}.sale-symbol{font-size:23px;color:#d2d8df}#shop-sell-overlay>strong{font-size:20px;font-weight:600}#shop-sell-overlay b{color:#ffe09a}#shop-sell-overlay>small{font-size:10px;color:#bec8d2}
 @media(max-width:800px){#economy-guide{width:48px}.treasury-meowth.sprite{width:51px;height:54px}.interest-yield{left:38px;bottom:64px;font-size:11px}.interest-coin{width:21px;height:21px;font-size:14px}.economy-tooltip{width:210px;left:52px}#shop-sell-overlay>strong{font-size:15px}#shop-sell-overlay>small{font-size:8px}.sale-symbol{font-size:17px}}
 @media(max-width:600px){.interest-stacks{gap:3px}.interest-coin{width:18px;height:18px;font-size:12px}.treasury-meowth.sprite{width:45px;height:48px}.interest-yield{bottom:54px;left:34px;font-size:10px}.interest-yield small{font-size:6px}.economy-tooltip{width:190px;padding:9px}}
+
+/* Reports and scouting opened from a round result must sit above the result card. */
+#arena-flyout{z-index:190}
+
+#arena:has(#arena-flyout:not(.hidden)) #result{visibility:hidden}
