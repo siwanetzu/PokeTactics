@@ -31,6 +31,10 @@ Drag an owned board or bench Pokémon onto the shop. The shop turns gray and dis
 
 Six components combine into 21 recipes. Each unit has three held slots; two components on a unit automatically combine. You can also combine two selected components in the tray. Completed items remain held until selling; merges keep equipment and return overflow. Every surviving trainer receives the same seeded component after a wild round, and bots equip through the same rules.
 
+The item bag sits beside the bench inside the arena and shows your unequipped item count. You begin with three components; wild-round results name each new component and confirm it was added to the bag, including after a loss. Use the bag's **?** button for acquisition, crafting and equipment instructions.
+
+Between battles, drag an item onto an owned board or bench Pokémon, or select an item and click a highlighted Pokémon. The bag shows its stats and previews an automatic combination when targeting a unit with a component. Full units are marked unless a valid combination frees the required slot. Equipped item badges and the selected Pokémon's slot count show where items went. Equipment locks during combat; Escape cancels selection.
+
 ## League rounds
 
 Three wild warmups lead into stage 2. Later stages contain three trainer battles, a shared draft, two more trainer battles and a wild round. Lower-health trainers draft first. Draft units are free and come from the shared pool; make bench space or combine an upgrade before picking.

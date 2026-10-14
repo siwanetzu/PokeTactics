@@ -43,7 +43,7 @@ npm run preview
 | Refresh shop | D; costs 2 gold |
 | Buy XP | F; costs 4 gold for 4 XP |
 | Sell | Drag over the shop and release, or select a unit and press E |
-| Equip / craft | Select an item then a Pokémon; select two components to craft |
+| Equip / craft | Drag an item onto a Pokémon, or select then click; select two components to craft |
 | Inspect a Pokémon | Right-click |
 | Scout, replay, sandbox, settings | Corner menu |
 | Cancel selection or an arena overlay | Escape |

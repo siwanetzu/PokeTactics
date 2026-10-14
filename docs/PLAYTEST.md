@@ -34,6 +34,10 @@ Retried the interactive check successfully in a fresh Codex in-app browser at `h
 
 Victory screenshot: ignored `artifacts/production-preview-victory.jpg`. No game code changes were needed. Live GitHub Pages verification remains part of the scheduled publication task.
 
+## Item interface update
+
+Verified the new item bag in development and production previews: eligible board/bench targets highlight on selection, bench Abra receives Wise Lens, Squirtle receives Vitality Seed and displays 734 HP, Wise Lens plus Vitality Seed crafts Miracle Seed, and Oddish equips that completed item. A wild-round loss still names and adds Vitality Seed to the bag. Combat disables item controls; advancing restores them, Escape clears selection/highlights, and the in-arena help opens and closes. No browser warnings/errors were recorded. The 90 existing tests and production build passed. The physical pointer-drag test remains unverified because launching the separate browser for that check was blocked by policy. Screenshots remain in ignored `artifacts/item-bag-ui.jpg` and `artifacts/item-reward-ui.jpg`.
+
 ## README clip
 
 `docs/images/gameplay.gif` is a real browser recording of an opening wild battle: 28 frames, approximately eight seconds, 960 × 540 pixels and about 1.2 MB. It shows movement, ordinary attacks, signature effects and the round result. The GIF uses a shared palette and was visually checked across its opening, ability impacts and ending.
