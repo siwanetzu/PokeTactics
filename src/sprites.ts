@@ -1,5 +1,5 @@
 const revision='2';
-export function spriteURL(id:number){return `/sprites/animated/${id}.gif?v=${revision}`;}
+export function spriteURL(id:number){return `${import.meta.env?.BASE_URL??'/'}sprites/animated/${id}.gif?v=${revision}`;}
 
 const loading=new Map<number,Promise<boolean>>();
 export function preloadSprites(ids:number[]){
@@ -21,7 +21,8 @@ export function installSpriteRecovery(root:Document){
  root.addEventListener('error',event=>{
   const image=event.target;
   if(!(image instanceof HTMLImageElement)||!image.classList.contains('sprite')||attempts.has(image))return;
-  const url=new URL(image.src);if(!url.pathname.startsWith('/sprites/animated/'))return;
+  const url=new URL(image.src),directory=new URL(spriteURL(1),root.baseURI).pathname.replace(/1\.gif$/,'');
+  if(!url.pathname.startsWith(directory))return;
   attempts.add(image);url.searchParams.set('retry','1');image.src=url.href;
  },true);
 }
