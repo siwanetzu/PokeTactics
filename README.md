@@ -2,7 +2,9 @@
 
 A browser-based Pokémon autobattler inspired by Teamfight Tactics. Build a team, combine copies, equip items, scout seven bot trainers and reposition on a hex battlefield to become the last trainer standing.
 
-![PokeTactics island arena](docs/images/arena.jpg)
+![PokeTactics live gameplay](docs/images/gameplay.gif)
+
+A short recording of a live browser battle, showing movement, attacks and signature abilities.
 
 ## Run locally
 
@@ -52,6 +54,7 @@ Progress saves in this browser. Use `?test-run=1` for a separate QA match.
 - [Architecture and replay format](docs/ARCHITECTURE.md)
 - [Balance experiments](docs/BALANCING.md)
 - [Development and contributions](CONTRIBUTING.md)
+- [Pre-publication playtest](docs/PLAYTEST.md)
 - [GitHub publication](docs/PUBLISHING.md)
 - [Asset credits and rights](CREDITS.md)
 
