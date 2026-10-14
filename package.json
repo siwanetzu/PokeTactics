@@ -1,0 +1,17 @@
+{
+  "name": "poketactics",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test src/engine.test.ts src/battle.test.ts src/traits.test.ts src/mana.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

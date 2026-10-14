@@ -1,0 +1,12 @@
+import {test} from 'node:test';
+import {strict as assert} from 'node:assert';
+import {components,recipe,equip,combine,itemStats,items} from './items.ts';
+import {fresh,merge,sell,prepare} from './engine.ts';
+import {freshMatch,resolveLobbyRound} from './lobby.ts';
+import {BattleSession,makeRecord,validateRecord} from './battle.ts';
+test('all 21 unordered component pairs have one symmetric recipe',()=>{assert.equal(items.filter(i=>i.parts).length,21);for(const a of components)for(const b of components){assert.ok(recipe(a.id,b.id));assert.equal(recipe(a.id,b.id),recipe(b.id,a.id));}});
+test('equipping combines components even at the three-slot cap',()=>{const g=fresh();g.inventory=['power','wise'];g.units[0].items=['power','leftovers','focusBand'];assert.equal(equip(g,1,0),'');assert.deepEqual(g.units[0].items,['charcoal','leftovers','focusBand']);assert.ok(equip(g,1,0));assert.deepEqual(g.inventory,['wise']);});
+test('bag crafting consumes exactly two selected components',()=>{const g=fresh();g.inventory=['guard','mana','swift'];assert.equal(combine(g,0,1),'');assert.deepEqual(g.inventory,['mysticWater','swift']);assert.ok(combine(g,0,0));});
+test('selling and merging preserve equipment, with excess returned to inventory',()=>{const g=fresh();g.inventory=[];const keep=g.units[0];keep.items=['charcoal','leftovers','focusBand'];g.units.push({...keep,uid:10,board:false,items:['quickClaw']},{...keep,uid:11,board:false,items:['choiceSpecs']});merge(g);assert.equal(keep.star,2);assert.deepEqual(g.inventory,['quickClaw','choiceSpecs']);sell(g,keep.uid);assert.equal(g.inventory.length,5);});
+test('gear changes combat and remains deterministic through replay',()=>{const g=fresh();g.units[0].items=['mysticWater','choiceSpecs'];const fs=prepare(g);assert.ok(fs[0].shield>0);assert.ok(fs[0].mana>=12);const r=makeRecord(fs,1,1);assert.ok(validateRecord(r));const a=new BattleSession(r),b=new BattleSession(r);a.seek(60);b.seek(60);assert.deepEqual(a.result(),b.result());const invalid=structuredClone(r);invalid.initial[0].itemBonuses!.spell=10;assert.ok(!validateRecord(invalid));assert.equal(itemStats(['focusBand']).resist,.12);});
+test('neutral equipment rewards are equal and idempotent',()=>{const g=freshMatch(1),before=g.inventory!.length;const s=new BattleSession(makeRecord(prepare(g),1,1));s.seek(60);resolveLobbyRound(g,s);assert.equal(g.inventory!.length,before+1);for(const bot of g.lobby!.rivals)assert.equal(bot.inventory!.length,1);resolveLobbyRound(g,s);assert.equal(g.inventory!.length,before+1);});
