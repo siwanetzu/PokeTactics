@@ -10,6 +10,7 @@ import {spriteFacing} from './facing';
 import {mountSandbox} from './sandbox-ui';
 import {stressRecord} from './stress';
 import {mountBattleMeter} from './meter';
+import {highlightsHTML} from './highlights';
 import './style.css';
 import {BattleAudio} from './audio';
 import './reference.css';
@@ -59,7 +60,23 @@ const combatKey=document.createElement('div');combatKey.id='combat-key';combatKe
 let inspectedUid:number|null=null,inspectedItem:string|null=null,inspectionPinned=false,inspectionTick=0;
 const meterHost=document.createElement('aside');meterHost.id='battle-meter';meterHost.className='hidden';meterHost.setAttribute('aria-label','Live combat meter');document.querySelector('.center')!.append(meterHost);
 const battleMeter=mountBattleMeter(meterHost,uid=>inspectPokemon(uid));
-function refreshBattleMeter(){battleMeter.update(fighters,{visible:!mobileLayout()&&phase!=='prep'&&fighters.length>0,seconds:battleSession?.seconds??elapsed,state:phase==='result'||battleSession?.done?'FINAL':phase==='replay'&&replayPaused?'PAUSED':phase==='replay'?'REPLAY':'LIVE'},battleSession?.record.initial??[]);}
+const highlightsHost=document.createElement('aside');highlightsHost.id='post-battle-summary';highlightsHost.className='hidden';highlightsHost.setAttribute('aria-label','Post-battle highlights');document.querySelector('.center')!.append(highlightsHost);
+const highlightsButton=document.createElement('button');highlightsButton.id='show-battle-summary';highlightsButton.textContent='Battle highlights';highlightsButton.className='hidden';meterHost.append(highlightsButton);
+let highlightsMode=true,highlightsFinished=false,highlightsSession:BattleSession|null=null;
+highlightsButton.onclick=()=>{highlightsMode=true;refreshBattleMeter();};
+highlightsHost.onclick=e=>{const button=(e.target as Element).closest<HTMLElement>('button');if(!button)return;if(button.hasAttribute('data-highlight-meter')){highlightsMode=false;refreshBattleMeter();}else if(button.dataset.highlightUid)inspectPokemon(Number(button.dataset.highlightUid));};
+function refreshBattleMeter(){
+ const active=!mobileLayout()&&phase!=='prep'&&fighters.length>0,finished=!!battleSession&&(phase==='result'||battleSession.done);
+ if(highlightsSession!==battleSession){highlightsSession=battleSession;highlightsFinished=false;highlightsHost.innerHTML='';}
+ if(finished&&!highlightsFinished)highlightsMode=true;highlightsFinished=finished;
+ const showHighlights=active&&finished&&highlightsMode;
+ highlightsButton.classList.toggle('hidden',!finished);
+ battleMeter.update(fighters,{visible:active&&!showHighlights,seconds:battleSession?.seconds??elapsed,state:finished?'FINAL':phase==='replay'&&replayPaused?'PAUSED':phase==='replay'?'REPLAY':'LIVE'},battleSession?.record.initial??[]);
+ highlightsHost.classList.toggle('hidden',!showHighlights);
+ if(showHighlights){if(!highlightsHost.innerHTML)highlightsHost.innerHTML=highlightsHTML(fighters,battleSession!.record.initial,battleSession!.seconds,battleSession!.result().winner);highlightsHost.parentElement?.style.setProperty('--meter-inspection-top',`${104+highlightsHost.offsetHeight}px`);}
+ // Seeking away from the result must discard its highlights, so the next ending uses current totals.
+ else if(!finished)highlightsHost.innerHTML='';
+}
 
 
 const placement=document.createElement('div');placement.id='placement-grid';surface.append(placement);
@@ -131,7 +148,7 @@ function updateFighters(){for(const f of fighters){
  const visibleHp=f.hp;
  el.classList.toggle('inspected',inspectedUid===f.uid&&!inspector.classList.contains('hidden'));const watchedHit=[...hits].reverse().find(h=>h.attacker===inspectedUid&&h.primary);el.classList.toggle('inspect-targeted',!!watchedHit&&watchedHit.target===f.uid&&f.hp>0&&f.uid!==inspectedUid&&!inspector.classList.contains('hidden'));el.dataset.slot=String(f.slot);el.dataset.reservedSlot=f.moveTo===null?'':String(f.moveTo);
  el.style.left=`${p.x}px`;el.style.top=`${p.y}px`;el.style.opacity=visibleHp<=0?'0':'1';
- const impact=hits.some(h=>h.target===f.uid&&h.life/(h.duration??1)<=.66&&h.life/(h.duration??1)>.5);
+ const impact=!battleSession?.done&&hits.some(h=>h.target===f.uid&&h.life/(h.duration??1)<=.66&&h.life/(h.duration??1)>.5);
  el.style.filter=impact?(fighters.length>=12&&!mobileLayout()?'brightness(1.18)':'brightness(1.65)'):f.statuses.some(s=>s.kind==='poison')?'drop-shadow(0 0 4px #bb86ef)':f.shield>0?'drop-shadow(0 0 5px #9de0ff)':'';el.dataset.status=f.statuses.map(s=>s.kind).join(' ');el.style.zIndex=String(Math.floor(f.y*10)+20);
  let lx=0,ly=0;
  if(attack){const to=point(attack.toX,attack.toY),dx=to.x-p.x,dy=to.y-p.y,d=Math.hypot(dx,dy)||1,age=1-attack.life/(attack.duration??1);
@@ -229,7 +246,7 @@ function frame(time:number){if(rotateQuery.matches){last=time;requestAnimationFr
   if(phase==='battle'){$('battle').innerHTML=`<span>⚔</span> Battling <span class="battle-time">${Math.floor(elapsed)}s</span>`;if(battleSession.done)finishBattle();}
   else{if(battleSession.steps%30===0||battleSession.done)renderReport([...fighters.filter(f=>!f.team)].sort((a,b)=>b.damage-a.damage));($('replay-seek') as HTMLInputElement).value=String(elapsed);const expected=battleSession.record.result;const verified=battleSession.done&&expected&&expected.checksum===battleSession.result().checksum;$('replay-time').textContent=`${elapsed.toFixed(1)}s${verified?' · VERIFIED':battleSession.done?expected?' · MISMATCH':' · FINISHED':''}`;if(battleSession.done){replayPaused=true;$('replay-pause').textContent='Play';}}
  }else hits=hits.filter(h=>(h.life-=dt)>0);
- if(time-inspectionTick>200){inspectionTick=time;refreshBattleMeter();refreshInspection();}battleFeedback();$('effects-layer').innerHTML=renderAttackEffects(hits,point,width,height,geometry().size,fighters.length>=12&&!mobileLayout(),fighters);requestAnimationFrame(frame);
+ if(time-inspectionTick>200){inspectionTick=time;refreshBattleMeter();refreshInspection();}battleFeedback();$('effects-layer').innerHTML=(phase==='result'||phase==='replay'&&battleSession?.done)?'':renderAttackEffects(hits,point,width,height,geometry().size,fighters.length>=12&&!mobileLayout(),fighters);requestAnimationFrame(frame);
 }
 function openReplayHistory(){if(phase==='battle')return toast('Finish your battle before opening replays.');showModal(`<small class="eyebrow">REPRODUCIBLE BATTLES</small><h2>Battle replays</h2><p>Every fight stores its seed and starting lineup. Playback never changes your adventure.</p><div class="replay-list">${replayRecords.length?replayRecords.map((r,i)=>`<button data-replay="${i}"><strong>Round ${r.round} · ${r.result?.winner===0?'Victory':r.result?.winner===1?'Defeat':'Draw'}</strong><small>Seed ${r.seed} · ${((r.result?.steps??0)/60).toFixed(1)}s · ${r.ruleset}</small><span>Watch →</span></button>`).join(''):'<p>Complete a battle to save your first replay.</p>'}</div>`);$('modal').querySelectorAll<HTMLButtonElement>('[data-replay]').forEach(button=>button.onclick=()=>startReplay(replayRecords[Number(button.dataset.replay)]));}
 function startReplay(record:BattleRecord){if(phase!=='replay'){replayReturn=phase;replaySavedSession=battleSession;}$('arena-flyout').classList.add('hidden');phase='replay';replayPaused=false;battleSession=new BattleSession(record);fighters=battleSession.fighters;hits=battleSession.hits;$('modal').classList.add('hidden');$('result').classList.add('hidden');$('replay-controls').classList.remove('hidden');($('replay-seek') as HTMLInputElement).max=String((record.result?.steps??3600)/60);$('replay-pause').textContent='Pause';render();}
@@ -257,7 +274,7 @@ app.addEventListener('click',e=>{if(mobileLayout())return;const el=(e.target as 
 app.addEventListener('keydown',e=>{if(mobileLayout())return;if(e.key==='Escape'){inspectedUid=null;inspectedItem=null;inspectionPinned=false;delete inspector.dataset.view;inspector.classList.add('hidden');return;}if(e.key!=='Enter'&&e.key!==' ')return;const el=(e.target as Element).closest<HTMLElement>('.held-badges [data-inspect-item],.fighter');if(!el)return;e.preventDefault();e.stopPropagation();if(el.dataset.inspectItem){inspectedItem=el.dataset.inspectItem;inspectionPinned=true;refreshInspection();}else inspectPokemon(Number(el.dataset.uid));});
 function refreshInspection(){if(mobileLayout()){inspector.classList.add('hidden');return;}let content='',revision='';
  if(inspectedItem)content=itemInspectionHTML(inspectedItem);
- else if(inspectedUid!==null){const f=phase!=='prep'?fighters.find(f=>f.uid===inspectedUid):undefined,u=g.units.find(u=>u.uid===inspectedUid)??opponentUnits(g).find(u=>u.uid===inspectedUid);const stats=f??(u?makeFighter(u,opponentUnits(g).some(v=>v.uid===u.uid)?1:0):undefined);if(stats){const attack=[...hits].reverse().find(h=>h.attacker===stats.uid&&h.primary);revision=`${stats.species}:${stats.star}`;content=pokemonInspectionHTML(stats,!!f&&(phase==='battle'||phase==='replay'),fighters.find(f=>f.uid===attack?.target&&f.hp>0));}}
+ else if(inspectedUid!==null){const f=phase!=='prep'?fighters.find(f=>f.uid===inspectedUid):undefined,u=g.units.find(u=>u.uid===inspectedUid)??opponentUnits(g).find(u=>u.uid===inspectedUid);const stats=f??(u?makeFighter(u,opponentUnits(g).some(v=>v.uid===u.uid)?1:0):undefined);if(stats){const attack=[...hits].reverse().find(h=>h.attacker===stats.uid&&h.primary);revision=`${stats.species}:${stats.star}`;content=pokemonInspectionHTML(stats,!!f&&!battleSession?.done&&(phase==='battle'||phase==='replay'),fighters.find(f=>f.uid===attack?.target&&f.hp>0));}}
  if(!content){inspector.classList.add('hidden');return;}inspector.classList.remove('hidden');
  const viewKey=`${inspectedItem??inspectedUid}:${inspectionPinned}:${phase}:${revision}`;
  if(inspector.dataset.view===viewKey){const next=document.createElement('div');next.innerHTML=content;for(const selector of ['.inspect-vitals','.inspect-target','.inspect-items']){const current=inspector.querySelector(selector),replacement=next.querySelector(selector);if(current&&replacement&&current.innerHTML!==replacement.innerHTML)current.innerHTML=replacement.innerHTML;}return;}

@@ -124,3 +124,12 @@ Added Taken and Shielding as two additional compact tabs, moving the team toggle
 All 105 tests pass. Across seeds 1, 7 and 42, Taken stays monotonic and each team's total matches the opposing team's health damage throughout the battle; tests also cover incoming/outgoing healing attribution, regeneration, injured starting HP, shield generation vs absorption, replay resets and opening grants.
 
 The seed-1 8v8 production-preview fight again reached 10.8s VERIFIED with checksum `2eebdd1b`. All 39 captured Taken/Shielding snapshots matched simulation ranks, rounded values and raw values/totals within 1e-8. Your team's leaders: Snorlax 3,868 taken / 1,721 shields generated. Opponent leaders: Arcanine 3,902 taken; Lapras 2,635 shields generated. Rewind restores 0 Taken and 781 opening shielding for your team. Team switching, row inspection and keyboard collapse remained functional, and no browser warnings/errors occurred. At 1280 × 720 and 1920 × 1080, the meter, inspector and replay controls remain separate; the viewport override was reset.
+
+
+## Compact post-battle highlights — 15 October 2026
+
+A six-card desktop HUD replaces the meter at the end of league fights and replays: damage dealer, healer and tank for each team. Cards open inspection; Meter / Battle highlights switches views. Tank ranks by health damage taken plus actual shield absorption, rather than unused shielding generated. Zero contribution produces no winner; ties use stable unit identity. Completed fights clear transient numbers/effects. The rewards card no longer dims the highlights and stays below the round header.
+
+All 107 tests pass. The seed-1 8v8 replay still finishes at 10.8s with VERIFIED checksum `2eebdd1b`. All six browser card identities and raw scores matched the simulation within 1e-8: your team Charizard 8,463 damage, Venusaur 1,236 healing, Snorlax 5,588 soaked; opponent Gengar 5,205 damage, Vileplume 675 healing, Lapras 5,728 soaked.
+
+Checked automatic completion, card inspection, full-meter switching and rewind removal of stale summaries. Ordinary league battles also displayed highlights beside the reward card, including a No healing entry when appropriate. At 1280 × 720 and 1920 × 1080 the summary, inspector and replay controls remain separate; viewport override reset. The ordinary result card starts at y85 below the round header ending y80. Browser warnings/errors remained empty. The GIF records the seed-1 fight, automatic final highlights and inspection of Lapras.

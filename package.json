@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "test:touch": "node scripts/touch-check.mjs",
-    "test": "node --experimental-strip-types --test src/engine.test.ts src/effects.test.ts src/battle.test.ts src/traits.test.ts src/balance.test.ts src/sandbox.test.ts src/damage.test.ts src/mana.test.ts src/mixed.test.ts src/facing.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts src/gestures.test.ts src/inspection.test.ts src/feedback.test.ts src/meter.test.ts",
+    "test": "node --experimental-strip-types --test src/engine.test.ts src/effects.test.ts src/battle.test.ts src/traits.test.ts src/balance.test.ts src/sandbox.test.ts src/damage.test.ts src/mana.test.ts src/mixed.test.ts src/facing.test.ts src/progression.test.ts src/lobby.test.ts src/items.test.ts src/gestures.test.ts src/inspection.test.ts src/feedback.test.ts src/meter.test.ts src/highlights.test.ts",
     "preview": "vite preview --host 127.0.0.1",
     "balance": "node --experimental-strip-types scripts/balance.ts",
     "audit:damage": "node --experimental-strip-types scripts/damage-audit.ts",

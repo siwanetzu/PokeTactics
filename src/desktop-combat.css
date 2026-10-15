@@ -42,3 +42,18 @@
  #battle-meter[data-metric=taken] .meter-track i{background:linear-gradient(90deg,#ac6261,#f4a49a)}#battle-meter[data-metric=taken] .meter-value{color:#ffc2b8}#battle-meter[data-metric=taken] [data-meter-metric=taken]{background:#603e42;border-color:#d99e99;color:#ffe3dc}
  #battle-meter[data-metric=shielding] .meter-track i{background:linear-gradient(90deg,#4c8cad,#a3ddfa)}#battle-meter[data-metric=shielding] .meter-value{color:#b4e7ff}#battle-meter[data-metric=shielding] [data-meter-metric=shielding]{background:#2e536a;border-color:#9ccce3;color:#dbf5ff}
 }
+
+#post-battle-summary{display:none}
+@media(min-width:1001px), (min-width:601px) and (min-height:521px){
+ #post-battle-summary:not(.hidden){display:block;position:absolute;right:16px;top:96px;width:248px;padding:9px;z-index:157;background:linear-gradient(145deg,#24394ff7,#15283cf7);border:1px solid #bba371;border-radius:8px;box-shadow:0 5px 15px #10243566}
+ .highlight-heading{display:flex;align-items:center;justify-content:space-between;height:22px;gap:5px}.highlight-heading>strong{font-size:9px;letter-spacing:.6px;color:#ffe1a2}.highlight-heading button,#show-battle-summary{background:#30465e;color:#f6dca6;border:1px solid #8196aa;border-radius:4px;font-size:9px;padding:4px 6px}.highlight-outcome{font-size:10px;color:#cbdde3;margin:6px 0 8px}
+ .highlight-teams{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;font-size:10px;color:#bee9cb}.highlight-teams b:last-child{color:#f2b5aa}
+ .highlight-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 5px}.highlight-card{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;height:59px;padding:4px 5px;text-align:left;border:1px solid #667b8e;border-radius:5px;background:#28425799}.highlight-card:hover:not(:disabled),.highlight-card:focus-visible{background:#3b5468;border-color:#e9cc8a}.highlight-card>small{font-size:8px;color:#e4ca95}.highlight-pokemon{display:flex;gap:3px;align-items:center;min-width:0}.highlight-pokemon img{width:22px;height:22px;object-fit:contain;image-rendering:pixelated;flex:none}.highlight-pokemon b{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e6eef1}.highlight-card>strong{font-size:11px;font-variant-numeric:tabular-nums;color:#ffdaa0}.highlight-card em{font-size:8px;font-weight:400;font-style:normal}.highlight-card.healing>small,.highlight-card.healing>strong{color:#b4f1c7}.highlight-card.tank>small,.highlight-card.tank>strong{color:#b6e5ff}.highlight-empty{font-size:10px;line-height:28px;color:#9ab1c0}.highlight-definition{font-size:8px;line-height:12px;color:#aec3d0;margin:7px 0 0}
+ #show-battle-summary{width:100%;margin-top:6px}
+ .center:has(#post-battle-summary:not(.hidden)) #desktop-inspector{top:var(--meter-inspection-top,390px);max-height:calc(100% - var(--meter-inspection-top,390px) - 132px)}
+}
+
+@media(min-width:1001px), (min-width:601px) and (min-height:521px){
+ /* The post-fight HUD stays legible alongside the existing rewards card. */
+ .arena .result{top:calc(50% + 39px);max-height:calc(100% - 92px);overflow:auto;padding:16px 20px;box-shadow:0 12px 35px #0007}
+}
