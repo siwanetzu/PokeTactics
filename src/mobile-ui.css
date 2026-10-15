@@ -39,7 +39,12 @@ button{touch-action:manipulation}
  .game-shell{--dock-left:clamp(112px,16vw,180px);--mobile-dock:calc(100% - var(--dock-left) - clamp(16px,6vw,72px));height:100dvh;min-height:0}
  .arena{right:0;bottom:144px}.arena #battle-surface{left:108px;right:30px;top:37px;bottom:0}
  .topbar .brand{display:none}#scene-menu{top:5px;right:8px;width:36px;height:36px}
- .round-bar{left:50%;transform:translateX(-50%);top:6px;width:270px;max-width:calc(100% - 340px);height:26px;min-height:26px;padding:0 8px}.round-title strong{font-size:9px}.round-title small{font-size:7px}.phase-pill{display:none}
+ .round-bar{left:50%;transform:translateX(-50%);top:6px;width:270px;max-width:calc(100% - 340px);height:30px;min-height:30px;padding:3px 9px;margin:0}.round-title{min-width:0;max-width:100%}.round-title>div{display:flex;flex-direction:column;gap:1px;min-width:0}.round-title strong{display:block;font-size:10px;line-height:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.round-title small{display:block;font-size:8px;line-height:10px;margin:0;letter-spacing:.5px;color:#c8b9d9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.phase-pill{display:none}
+ #economy-guide{display:flex;width:44px;height:140px;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 2px 2px #10202e66)}
+ #economy-guide .interest-stacks{gap:3px}#economy-guide .interest-coin{width:16px;height:16px;font-size:11px;border-width:1px;flex:0 0 16px}
+ #economy-guide .treasury-meowth.sprite{width:44px;height:44px;margin-top:4px;flex:0 0 44px}
+ #economy-guide .interest-yield{left:34px;bottom:47px;font-size:11px}#economy-guide .interest-yield small{font-size:6px}
+ #economy-guide .economy-tooltip{display:none}
  .arena-traits{left:8px;right:auto;top:51px;width:94px}.arena-traits .trainer{left:8px;top:6px;width:58px;height:34px;padding:5px}
  #synergies{display:flex;flex-direction:column;gap:4px;max-height:calc(100dvh - 201px);overflow-y:auto;overflow-x:hidden;padding:1px 2px 4px;touch-action:pan-y;scrollbar-width:none}
  .arena-traits .synergy{flex:0 0 32px;min-height:32px;height:32px;width:90px;padding:3px;gap:4px}.arena-traits .synergy-title strong{font-size:9px}.arena-traits .synergy-count{font-size:9px}.arena-traits .synergy-icon{width:20px;height:22px}

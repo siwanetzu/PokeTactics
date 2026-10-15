@@ -53,7 +53,8 @@ const unitActions=document.createElement('div');unitActions.id='mobile-unit-acti
 const placement=document.createElement('div');placement.id='placement-grid';surface.append(placement);
 placement.onclick=e=>{const tile=(e.target as Element).closest<HTMLElement>('[data-place]');if(tile&&selected!==null){e.stopPropagation();move(selected,Number(tile.dataset.place),true);}};
 const flyout=document.createElement('div');flyout.id='arena-flyout';flyout.className='hidden';$('arena').append(flyout);
-const economyGuide=document.createElement('div');economyGuide.id='economy-guide';economyGuide.tabIndex=0;economyGuide.setAttribute('role','group');surface.append(economyGuide);
+const economyGuide=document.createElement('div');economyGuide.id='economy-guide';economyGuide.tabIndex=0;economyGuide.setAttribute('role','button');surface.append(economyGuide);
+economyGuide.onclick=()=>showArenaPanel(economyGuide.querySelector('.economy-tooltip')!.innerHTML);economyGuide.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();economyGuide.click();}};
 const sellOverlay=document.createElement('div');sellOverlay.id='shop-sell-overlay';sellOverlay.className='hidden';sellOverlay.setAttribute('role','status');sellOverlay.setAttribute('aria-live','polite');document.querySelector('.shop')!.append(sellOverlay);
 
 $('arena').append($('sell'));$('sell').textContent='♲ Sell selected · E';
@@ -284,7 +285,12 @@ window.addEventListener('blur',()=>{cancelItemDrag(true);renderEquipment();rende
 window.addEventListener('keydown',e=>{if(e.key==='Escape')cancelItemDrag();});
 
 
-function positionEconomyGuide(){const {size,ox}=geometry();economyGuide.style.left=`${Math.max(12,ox-size*2.2-25)}px`;economyGuide.style.top=`${Math.max(65,slotPoint(28).y-(width<600?145:175))}px`;}
+function positionEconomyGuide(){const {size,ox}=geometry();
+ // Keep the treasury in the water between the trait rail and the island.
+ const phone=mobileLayout();
+ economyGuide.style.left=`${phone?Math.max(8,ox-size-82):Math.max(12,ox-size*2.2-25)}px`;
+ economyGuide.style.top=`${phone?Math.max(2,(height-140)/2):Math.max(65,slotPoint(28).y-(width<600?145:175))}px`;
+}
 function renderEconomyGuide(){const interest=interestGold(g.gold),next=(interest+1)*10,remaining=next-g.gold;
  economyGuide.setAttribute('aria-label',`Meowth treasury: ${g.gold} gold saved, +${interest} gold interest each round`);
  economyGuide.innerHTML=`<div class="interest-stacks">${[50,40,30,20,10].map(threshold=>`<span class="interest-coin ${g.gold>=threshold?'lit':''}" aria-label="${threshold} gold: ${g.gold>=threshold?'active':'inactive'} interest marker" title="Save ${threshold} gold to earn +${threshold/10} interest per round"><span>₽</span></span>`).join('')}</div><strong class="interest-yield">+${interest}<small>/ round</small></strong>${sprite(52,'treasury-meowth')}<div class="economy-tooltip"><b>MEOWTH’S TREASURY</b><p>${g.gold} saved gold → <strong>+${interest} interest / round</strong></p><p>Each 10 saved gold earns +1 interest, up to +5 at 50 gold. Interest uses your bank before round income is added.</p><small>${interest===5?'Maximum interest reached':`Save ${remaining} more gold to reach ${next} and earn +${interest+1}.`}</small></div>`;positionEconomyGuide();

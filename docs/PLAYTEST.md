@@ -79,3 +79,10 @@ Raw captures and detailed audit output remain in the ignored `artifacts/` direct
 Replaced the right-hand reserve/shop column with a horizontal bench above a bottom shop. Synergies stay left of the battlefield; the compact item tray remains visible at bottom left and expands for details. Health, level, gold and round information share the compact top HUD. Mobile hex sizing uses the available board height instead of leaving a large gap around the island. Desktop layout is unchanged.
 
 The trusted-touch regression runs at 667 × 375, including horizontal bench/shop swipes, upward reserve deployment, board movement, dragging directly from the compact item tray, cancelled gestures, return to bench, purchasing, portrait pause/resume and battle completion. Layout bounds are checked at 667 × 375, 844 × 390 and 932 × 430. All 95 unit tests and the production build pass. Screenshots and the controls GIF are captured from Chromium phone emulation; physical-device validation remains outstanding.
+
+
+## Mobile treasury and round header — 15 October 2026
+
+Restored Meowth and the five interest markers in the water between the synergy rail and battlefield. The compact stack fits inside the battle surface and above the bottom item controls. Markers use the same live bank thresholds as desktop; tapping the treasury opens its existing economy explanation in the arena panel. Explicit line heights and removal of the inherited stage-label margin keep both round-header lines inside the pill.
+
+The touch regression checks treasury visibility, all five markers and the active tier count, separation from synergies/items, and header text bounds at 667 × 375, 844 × 390 and 932 × 430. It also taps the treasury explanation and returns to the board before the existing purchase and battle-completion check. Screenshots are captured at each size.

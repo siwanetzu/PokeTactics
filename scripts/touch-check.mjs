@@ -78,8 +78,15 @@ try{
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Landscape width overflows');
   const board=await page.locator('#battle-surface').boundingBox(),bench=await page.locator('.bench-bar').boundingBox(),shop=await page.locator('.shop').boundingBox(),bag=await page.locator('#equipment-hud').boundingBox();
   assert.ok(board.height>=180,'Battlefield lost too much height');assert.ok(board.y+board.height<=bench.y+1,'Bench overlaps battlefield');assert.ok(bench.y+bench.height<=shop.y,'Shop overlaps bench');assert.ok(bag.x+bag.width<=shop.x,'Items overlap shop');
+  const treasury=await page.locator('#economy-guide').boundingBox(),traits=await page.locator('#synergies').boundingBox(),items=await page.locator('#mobile-item-toggle').boundingBox();
+  assert.ok(treasury.width>0&&treasury.height>0,'Treasury is hidden');assert.ok(treasury.x>=traits.x+traits.width+8,'Treasury overlaps synergies');assert.ok(treasury.y+treasury.height<=items.y,'Treasury overlaps item controls');assert.ok(treasury.y>=board.y&&treasury.y+treasury.height<=board.y+board.height,'Treasury clipped by battlefield');
+  const gold=(await state()).gold;assert.equal(await page.locator('.interest-coin').count(),5);assert.equal(await page.locator('.interest-coin.lit').count(),Math.min(5,Math.floor(gold/10)));
+  const header=await page.locator('.round-bar').boundingBox();for(const id of ['#round-label','#phase-label']){const text=await page.locator(id).boundingBox();assert.ok(text.y>=header.y+2&&text.y+text.height<=header.y+header.height-2,'Round text escapes header');}
+  await page.screenshot({path:path.join(root,`layout-${viewport.width}.png`)});
+
  }
  await page.setViewportSize({width:667,height:375});
+ const beforeTreasury=await state();await page.getByRole('button',{name:/Meowth treasury:/}).tap();await page.locator('#arena-flyout').getByText('MEOWTH’S TREASURY',{exact:true}).waitFor();assert.equal((await state()).gold,beforeTreasury.gold);await page.getByRole('button',{name:'Return to battlefield',exact:true}).tap();
  const goldBeforeBuy=(await state()).gold;await page.locator('#shop-cards .shop-card:not(.sold)').first().tap();assert.ok((await state()).gold<goldBeforeBuy,'Shop tap did not buy a Pokémon');
  await page.getByRole('button',{name:'⚔ Battle',exact:true}).tap();await page.waitForTimeout(700);
  await page.setViewportSize({width:390,height:844});await page.getByRole('heading',{name:'Rotate your phone',exact:true}).waitFor();
