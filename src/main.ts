@@ -75,7 +75,7 @@ let width=0,height=0,unitScale=1;
 const rotateQuery=matchMedia('(max-width:600px) and (orientation:portrait)');
 const mobileQuery=matchMedia('(max-width:600px), (max-width:1000px) and (max-height:520px)');
 function mobileLayout(){return mobileQuery.matches;}
-function geometry(){const narrow=width<600,size=Math.min(narrow?(width-95)/14.4:width/17,height/10.8,54);const phone=mobileLayout();const touchSize=phone?Math.min((width-24)/13.4,height/10.8,54):size;return {size:touchSize,ox:(width+(narrow&&!phone?80:0))/2-touchSize*5.64,oy:height/2-touchSize*3.72+(phone?8:35)};}
+function geometry(){const narrow=width<600,size=Math.min(narrow?(width-95)/14.4:width/17,height/10.8,54);const phone=mobileLayout();const touchSize=phone?Math.min((width-24)/13.4,(height-8)/9.5,54):size;return {size:touchSize,ox:(width+(narrow&&!phone?80:0))/2-touchSize*5.64,oy:height/2-touchSize*3.72+(phone?0:35)};}
 function point(x:number,y:number){const {size,ox,oy}=geometry();return {x:ox+x*size*1.73,y:oy+y*size*1.73};}
 function slotPoint(slot:number){const p=cell(slot);return point(p.x,p.y);}
 function save(){if(phase==='replay')return;try{localStorage.setItem(saveKey,JSON.stringify({...g,schemaVersion:5,resolved:phase==='result'}));$('save-status').textContent='✓ Adventure saved';}catch{$('save-status').textContent='Saving unavailable';}}

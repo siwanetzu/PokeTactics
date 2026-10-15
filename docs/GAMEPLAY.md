@@ -37,9 +37,9 @@ Between battles, drag an item onto an owned board or bench Pokémon, or select a
 
 ## Phone controls
 
-Phone play uses landscape. In portrait, a rotate prompt blocks game input and pauses battle simulation; rotating back resumes the match. The battlefield sits on the left, with reserves, Battle and the shop on the right. Common landscape phone sizes fit without page scrolling.
+Phone play uses landscape. In portrait, a rotate prompt blocks game input and pauses battle simulation; rotating back resumes the match. The battlefield sits above the horizontal reserves and shop, with Battle at the end of the bench. Synergies and an always-visible compact item tray sit on the left; Items opens the detailed bag. Common landscape phone sizes fit without page scrolling.
 
-Tap a Pokémon and then a highlighted tile to position it, or drag directly. Swipe the reserves vertically to browse; drag a reserve sideways toward the board to deploy it. Use the selection bar to inspect, return to reserves, sell or cancel. Tap a synergy for its bonuses. Item selection or dragging closes the drawer so targets remain unobstructed. Shop swipes browse without buying; cancelled gestures preserve units and items.
+Tap a Pokémon and then a highlighted tile to position it, or drag directly. Swipe the reserves sideways to browse; drag a reserve upward toward the board to deploy it. Use the selection bar to inspect, return to reserves, sell or cancel. Tap a synergy for its bonuses. Item selection or dragging collapses the detailed bag so targets remain unobstructed. Shop swipes browse without buying; cancelled gestures preserve units and items.
 
 ## League rounds
 

@@ -50,7 +50,7 @@ npm run preview
 
 Progress saves in this browser. Use `?test-run=1` for a separate QA match.
 
-On a phone, tap a Pokémon then a highlighted tile to move it, or drag it directly. Swipe the reserves vertically to browse; drag a benched Pokémon sideways onto the board. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items** and drag an item onto your Pokémon, or choose it then tap a target. Swipe the shop to browse without buying. The landscape layout puts team-building controls beside the arena and fits common phone screens without page scrolling.
+On a phone, tap a Pokémon then a highlighted tile to move it, or drag it directly. Swipe the reserves sideways to browse; drag a benched Pokémon upward onto the board. The selection bar offers **Info**, **Bench**, **Sell** and **Cancel**; tap a synergy to read its bonuses. Open **Items** and drag an item onto your Pokémon, or choose it then tap a target. Swipe the shop to browse without buying. The landscape layout keeps the battlefield above a horizontal bench and shop, with synergies and items on the left. Common phone screens fit without page scrolling.
 
 ## Documentation
 

@@ -72,3 +72,10 @@ The trusted-touch check now starts in portrait, verifies the prompt, rotates int
 `docs/images/gameplay.gif` is a real browser recording of an opening wild battle: 28 frames, approximately eight seconds, 960 × 540 pixels and about 1.2 MB. It shows movement, ordinary attacks, signature effects and the round result. The GIF uses a shared palette and was visually checked across its opening, ability impacts and ending.
 
 Raw captures and detailed audit output remain in the ignored `artifacts/` directory. These checks describe the current local prototype; they do not establish online multiplayer, hosted deployment or universal matchup balance.
+
+
+## Reference-style landscape dock — 15 October 2026
+
+Replaced the right-hand reserve/shop column with a horizontal bench above a bottom shop. Synergies stay left of the battlefield; the compact item tray remains visible at bottom left and expands for details. Health, level, gold and round information share the compact top HUD. Mobile hex sizing uses the available board height instead of leaving a large gap around the island. Desktop layout is unchanged.
+
+The trusted-touch regression runs at 667 × 375, including horizontal bench/shop swipes, upward reserve deployment, board movement, dragging directly from the compact item tray, cancelled gestures, return to bench, purchasing, portrait pause/resume and battle completion. Layout bounds are checked at 667 × 375, 844 × 390 and 932 × 430. All 95 unit tests and the production build pass. Screenshots and the controls GIF are captured from Chromium phone emulation; physical-device validation remains outstanding.
