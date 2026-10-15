@@ -46,3 +46,10 @@ Tap a Pokémon and then a highlighted tile to position it, or drag directly. Swi
 Three wild warmups lead into stage 2. Later stages contain three trainer battles, a shared draft, two more trainer battles and a wild round. Lower-health trainers draft first. Draft units are free and come from the shared pool; make bench space or combine an upgrade before picking.
 
 There are 29/22/18/12/10 copies of each cost-1/2/3/4/5 species. Owned units, shop offers and draft choices all reserve stock. Trainer pairings rotate through opponents; an odd lobby uses one ghost board without damaging the ghost's owner twice. Losing costs health according to stage and surviving enemy stars. Eliminated trainers release their stock. The league ends when you are eliminated or every rival is eliminated, with a final placement.
+
+
+## Desktop combat feedback and inspection
+
+Hover a board or bench Pokémon to inspect it beside the arena. Right-click to pin the card; use Unpin or Escape to release it. During battle, the card updates HP, mana, shields, statuses and its current target. The inspected Pokémon has a gold ground ring; its recent attack target gets a dashed coral ring. Click a held item badge or a held-item row for its stats; hover or right-click a bag item for its component recipes. Inspection never pauses a live battle.
+
+Basic hits use ivory numbers, abilities use larger amber SKILL numbers, and healing uses green + HEAL numbers with recovery ripples and a source tether. Cast labels name both the caster and ability; a target circle and dashed trace show where the skill is going. Blue shield bars sit above health bars. These are presentation changes; battle rules and item balance are unchanged.

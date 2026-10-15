@@ -18,8 +18,18 @@ const line=(x:number,y:number,xx:number,yy:number,color:string,width=2)=>`<line 
 const ring=(x:number,y:number,r:number,color:string,width=2)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${color}" stroke-width="${width}"/>`;
 const star=(x:number,y:number,r:number,color:string)=>{const points=Array.from({length:10},(_,i)=>{const a=i*Math.PI/5-Math.PI/2,rr=i%2?r*.4:r;return `${x+Math.cos(a)*rr},${y+Math.sin(a)*rr}`;}).join(' ');return `<polygon points="${points}" fill="${color}"/>`;};
 export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},width:number,height:number,size:number){
- let drawing='',labels='';
+ let drawing='',labels='';const lanes=new Map<number,number>();
  for(const original of hits){const h={...original,life:original.life/(original.duration??1)};const age=1-h.life,cast=!!h.ability,profile=abilityEffects[h.species],color=cast?profile.color:h.color,accent=cast?profile.accent:'#fff1d3';const a=point(h.x,h.y),b=point(h.toX,h.toY);a.y-=size*.22;b.y-=size*.22;const progress=Math.max(0,Math.min(1,(age-.12)/.22)),x=a.x+(b.x-a.x)*progress,y=a.y+(b.y-a.y)*progress;let art='';
+  const lane=lanes.get(h.target)??0;lanes.set(h.target,lane+1);
+  const labelX=Math.max(25,Math.min(width-25,b.x+(h.kind==='heal'?22:-12)+(lane%3-1)*18)),labelY=Math.max(18,b.y-size*.9-(lane%3)*15-Math.max(0,age-.34)*32);
+  if(h.kind==='heal'){
+   const fade=Math.min(1,h.life*3),r=8+age*18;
+   drawing+=`<g class="healing-vfx" opacity="${fade}">${line(a.x,a.y,b.x,b.y,'#91f7ba',1.5)}${ring(b.x,b.y,r,'#81f7b4',2)}<path d="M ${b.x-5} ${b.y-12-age*14} h 10 M ${b.x} ${b.y-17-age*14} v 10" stroke="#c4ffdb" stroke-width="3" stroke-linecap="round"/></g>`;
+   if(h.value>0)labels+=`<div class="damage-number healing-number" style="left:${labelX}px;top:${labelY}px;opacity:${fade}">+${Math.round(h.value)} <small>HEAL</small></div>`;
+   continue;
+  }
+  if(cast&&h.primary&&age<.36){art+=`<g class="ability-telegraph" opacity="${.6*(1-age/.5)}"><path d="M ${a.x} ${a.y} L ${b.x} ${b.y}" stroke="${color}" stroke-width="2" stroke-dasharray="4 5" fill="none"/>${ring(b.x,b.y,size*.43,color,2)}</g>`;}
+
   if(h.primary&&age<.13){art+=ring(a.x,a.y,4+age*80,color,2);art+=star(a.x,a.y,3+age*20,accent);}
   if(h.primary&&age>=.12&&age<.36){
    // A faint trail makes every attacker/target pairing readable.
@@ -44,9 +54,9 @@ export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:num
    else art+=`<circle cx="${x}" cy="${y}" r="3" fill="${accent}" stroke="${color}" stroke-width="2"/>`;
   }
   if(age>=.34){const t=(age-.34)/.66,opacity=1-t;art+=`<g opacity="${opacity}">`+ring(b.x,b.y,5+t*(cast?24:12),color,cast?3:1.5);for(let i=0;i<(cast?8:4);i++){const angle=i*Math.PI*2/(cast?8:4)+h.species*.2;const px=b.x+Math.cos(angle)*(8+t*22),py=b.y+Math.sin(angle)*(8+t*22);art+=star(px,py,cast?3:1.7,i%2?accent:color);}if(cast&&h.primary){if(profile.shape==='fireblast')art+=star(b.x,b.y,18*(1-t),color);if(profile.shape==='night')art+=`<ellipse cx="${b.x}" cy="${b.y}" rx="${12+t*15}" ry="${8+t*10}" fill="#49345d77"/>`;if(profile.shape==='confusion')art+=ring(b.x,b.y,8+t*10,accent);if(profile.shape==='fang')art+=`<path d="M ${b.x-9} ${b.y-8} L ${b.x-6} ${b.y+4} L ${b.x-3} ${b.y-8} M ${b.x+3} ${b.y-8} L ${b.x+6} ${b.y+4} L ${b.x+9} ${b.y-8}" fill="${accent}"/>`;if(profile.shape==='drain'){const xx=b.x+(a.x-b.x)*t,yy=b.y+(a.y-b.y)*t;art+=`<circle cx="${xx}" cy="${yy}" r="4" fill="${accent}"/>`+ring(a.x,a.y,10+t*10,color);}}art+='</g>';
-   if(h.value>0)labels+=`<div class="damage-number ${cast?'ability-hit':''}" style="left:${b.x}px;top:${b.y-size*.6-t*20}px;opacity:${opacity};color:${color}">${h.kind==='heal'?'+':''}${Math.round(h.value)}</div>`;
+   if(h.value>0)labels+=`<div class="damage-number ${cast?'ability-hit':'attack-number'}" style="left:${labelX}px;top:${labelY}px;opacity:${Math.min(1,opacity*2)}">${Math.round(h.value)}${cast?'<small>SKILL</small>':''}</div>`;
   }
-  if(cast&&h.primary&&age<.65)labels+=`<div class="cast-label" style="left:${a.x}px;top:${a.y-size*.8}px;color:${color};opacity:${Math.min(1,h.life*3)}">${h.ability}</div>`;
+  if(cast&&h.primary&&age<.72)labels+=`<div class="cast-label" style="left:${Math.max(85,Math.min(width-85,a.x))}px;top:${Math.max(4,a.y-size*1.5)}px;color:${color};opacity:${Math.min(1,h.life*4)}"><small>${species(h.species).name}</small>${h.ability}</div>`;
   drawing+=art;
  }
  return `<svg class="combat-vfx" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true"><defs><filter id="spell-bloom" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${epicEffects(hits,point,size)}${drawing}</svg>${labels}`;
@@ -55,7 +65,7 @@ export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:num
 /** Cinematic layers share the same deterministic timeline as hit feedback. */
 function epicEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},size:number){
  let output='';
- for(const h of hits){if(!h.ability||h.kind==='heal')continue;
+ for(const h of hits){if(!h.ability||h.kind==='heal'||!h.primary)continue;
  const p=abilityEffects[h.species],u=1-h.life/(h.duration??1),a=point(h.x,h.y),b=point(h.toX,h.toY),r=size;
  a.y-=r*.22;b.y-=r*.22;
  const charge=Math.min(1,u/.18),travel=Math.max(0,Math.min(1,(u-.16)/.22)),impact=Math.max(0,(u-.36)/.64),fade=Math.min(1,(1-u)*3);
@@ -78,7 +88,7 @@ function epicEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},s
    art+='</g>';
   }
   if(p.shape==='vine'){for(const side of [-1,1]){art+=`<path d="M ${a.x} ${a.y} Q ${a.x+dx*.5+px*r*.4*side} ${a.y+dy*.5+py*r*.4*side} ${ex} ${ey}" stroke="${p.color}" stroke-width="${r*.09}" fill="none"/>`;for(let i=1;i<5;i++){const t=i/5*travel;art+=`<ellipse cx="${a.x+dx*t+px*Math.sin(t*Math.PI)*r*.3*side}" cy="${a.y+dy*t+py*Math.sin(t*Math.PI)*r*.3*side}" rx="${r*.13}" ry="${r*.05}" fill="${p.accent}" transform="rotate(${side*35} ${a.x+dx*t} ${a.y+dy*t})"/>`;}}}
-  if(['flame','fireblast','wheel'].includes(p.shape)){for(let i=0;i<18;i++){const t=(i/18)*travel,w=Math.sin(t*Math.PI)*r*.35;const side=Math.sin(i*2.4+u*20);art+=`<circle cx="${a.x+dx*t+px*w*side}" cy="${a.y+dy*t+py*w*side}" r="${(3+i%4)*(1-u*.6)}" fill="${i%3?p.color:p.accent}" opacity=".75"/>`;}}
+  if(['flame','fireblast','wheel'].includes(p.shape)){for(let i=0;i<8;i++){const t=(i/18)*travel,w=Math.sin(t*Math.PI)*r*.35;const side=Math.sin(i*2.4+u*20);art+=`<circle cx="${a.x+dx*t+px*w*side}" cy="${a.y+dy*t+py*w*side}" r="${(3+i%4)*(1-u*.6)}" fill="${i%3?p.color:p.accent}" opacity=".75"/>`;}}
   if(p.shape==='stars'||p.shape==='coins')for(let i=0;i<5;i++){const offset=Math.sin(u*12+i)*r*.25,t=Math.max(0,travel-i*.035),x=a.x+dx*t+px*offset,y=a.y+dy*t+py*offset;art+=line(x-dx/d*15,y-dy/d*15,x,y,p.color,2)+star(x,y,4+i%3,p.accent);}
  }
  if(u>=.32){
@@ -99,7 +109,7 @@ function epicEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},s
   }
   if(p.shape==='fang'){art+=`<ellipse cx="${b.x}" cy="${b.y+r*.25}" rx="${r*.55}" ry="${r*.18}" fill="${p.color}" opacity=".2"/>`;for(const side of [-1,1])art+=`<path d="M ${b.x+side*r*.3} ${b.y-r*.4} L ${b.x+side*r*.18} ${b.y+r*.1} L ${b.x+side*r*.06} ${b.y-r*.4}" fill="${p.accent}"/>`;}
   if(p.shape==='drain')for(let i=0;i<7;i++){const tt=(t+i/7)%1;art+=`<circle cx="${b.x+(a.x-b.x)*tt+Math.sin(tt*8+i)*8}" cy="${b.y+(a.y-b.y)*tt}" r="${2+i%3}" fill="${p.accent}"/>`;}
-  for(let i=0;i<18;i++){const angle=i*2.399+h.species*.15,dist=r*(.15+t*(.65+(i%4)*.2));const x=b.x+Math.cos(angle)*dist,y=b.y+Math.sin(angle)*dist*.65-t*t*r*.2;art+=`<circle cx="${x}" cy="${y}" r="${(1+i%3)*(1-t*.6)}" fill="${i%3?p.color:p.accent}" opacity="${1-t}"/>`;}
+  for(let i=0;i<8;i++){const angle=i*2.399+h.species*.15,dist=r*(.15+t*(.65+(i%4)*.2));const x=b.x+Math.cos(angle)*dist,y=b.y+Math.sin(angle)*dist*.65-t*t*r*.2;art+=`<circle cx="${x}" cy="${y}" r="${(1+i%3)*(1-t*.6)}" fill="${i%3?p.color:p.accent}" opacity="${1-t}"/>`;}
   art+='</g>';
  }
  output+=art;

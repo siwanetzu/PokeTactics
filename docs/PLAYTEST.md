@@ -86,3 +86,12 @@ The trusted-touch regression runs at 667 × 375, including horizontal bench/shop
 Restored Meowth and the five interest markers in the water between the synergy rail and battlefield. The compact stack fits inside the battle surface and above the bottom item controls. Markers use the same live bank thresholds as desktop; tapping the treasury opens its existing economy explanation in the arena panel. Explicit line heights and removal of the inherited stage-label margin keep both round-header lines inside the pill.
 
 The touch regression checks treasury visibility, all five markers and the active tier count, separation from synergies/items, and header text bounds at 667 × 375, 844 × 390 and 932 × 430. It also taps the treasury explanation and returns to the board before the existing purchase and battle-completion check. Screenshots are captured at each size.
+
+
+## Desktop battle readability — 15 October 2026
+
+Added distinct healing feedback, stacked damage lanes, named casts, ability target traces and shield bars. A compact desktop inspector supports hover/focus, right-click pinning, live vitals, current targets, equipment stats and component recipes. Live updates patch changing fields while preserving expanded role details and scroll position. Held item clicks are intercepted before board selection; keyboard activation pins inspection without triggering the battle shortcut.
+
+All 99 tests pass, including recovery-vs-damage rendering, concurrent impact lanes, live inspection values and item recipes. The 1280 × 720 production-preview browser playtest equipped a Power Band on Squirtle, inspected its stats, completed a battle, and replayed seed 874678473 to 9.4 seconds with VERIFIED checksum. Captured real healing, skill damage, cast labels and active shields in the GIF. Tested held-badge clicks, keyboard pinning and the item recipe card; browser warnings/errors were empty. No combat rules changed.
+
+Replay transport controls now sit in the right margin below inspection instead of crossing the battlefield. A second capture of the same replay again reached VERIFIED. Expanded role details stayed open across live refreshes; keyboard Space on Pin/Unpin left preparation unchanged. The existing trusted-touch regression also passed.
