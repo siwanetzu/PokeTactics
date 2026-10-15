@@ -34,3 +34,11 @@
  #battle-meter.collapsed .meter-body{display:none}
  .center:has(#battle-meter:not(.hidden)) #desktop-inspector{top:var(--meter-inspection-top,390px);max-height:calc(100% - var(--meter-inspection-top,390px) - 132px)}
 }
+
+@media(min-width:1001px), (min-width:601px) and (min-height:521px){
+ .meter-heading #meter-team{width:auto;height:21px;font-size:8px;padding:0 4px;white-space:nowrap}
+ .meter-controls>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:3px}.meter-controls button{font-size:9px;padding:4px 2px;min-width:0}
+ #meter-extra{display:block;font-size:8px;line-height:11px;color:#b1c4d1;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #battle-meter[data-metric=taken] .meter-track i{background:linear-gradient(90deg,#ac6261,#f4a49a)}#battle-meter[data-metric=taken] .meter-value{color:#ffc2b8}#battle-meter[data-metric=taken] [data-meter-metric=taken]{background:#603e42;border-color:#d99e99;color:#ffe3dc}
+ #battle-meter[data-metric=shielding] .meter-track i{background:linear-gradient(90deg,#4c8cad,#a3ddfa)}#battle-meter[data-metric=shielding] .meter-value{color:#b4e7ff}#battle-meter[data-metric=shielding] [data-meter-metric=shielding]{background:#2e536a;border-color:#9ccce3;color:#dbf5ff}
+}

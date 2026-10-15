@@ -59,7 +59,7 @@ const combatKey=document.createElement('div');combatKey.id='combat-key';combatKe
 let inspectedUid:number|null=null,inspectedItem:string|null=null,inspectionPinned=false,inspectionTick=0;
 const meterHost=document.createElement('aside');meterHost.id='battle-meter';meterHost.className='hidden';meterHost.setAttribute('aria-label','Live combat meter');document.querySelector('.center')!.append(meterHost);
 const battleMeter=mountBattleMeter(meterHost,uid=>inspectPokemon(uid));
-function refreshBattleMeter(){battleMeter.update(fighters,{visible:!mobileLayout()&&phase!=='prep'&&fighters.length>0,seconds:battleSession?.seconds??elapsed,state:phase==='result'||battleSession?.done?'FINAL':phase==='replay'&&replayPaused?'PAUSED':phase==='replay'?'REPLAY':'LIVE'});}
+function refreshBattleMeter(){battleMeter.update(fighters,{visible:!mobileLayout()&&phase!=='prep'&&fighters.length>0,seconds:battleSession?.seconds??elapsed,state:phase==='result'||battleSession?.done?'FINAL':phase==='replay'&&replayPaused?'PAUSED':phase==='replay'?'REPLAY':'LIVE'},battleSession?.record.initial??[]);}
 
 
 const placement=document.createElement('div');placement.id='placement-grid';surface.append(placement);

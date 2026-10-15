@@ -115,3 +115,12 @@ The same seed-1 8v8 fixture completed at 10.8s with VERIFIED checksum `2eebdd1b`
 Browser checks cover team toggle, row inspection, collapse/expand (including keyboard Space without resuming combat), final totals, and rewind to 0.0s clearing all eight rows. At 1280 × 720, meter ends at y385, inspector spans y393–588, and transport begins at y612, leaving the battlefield unobstructed. Unit tests cover metric separation, team filtering, KO retention, shares/bar scaling, zero values, final report agreement and replay reset/seeking.
 
 All 103 unit tests pass. At 1920 × 1080, meter/inspector/replay control bounds remain disjoint; the temporary viewport override was reset. The final GIF switches damage/healing during combat and clicks Venusaur’s meter row to inspect live stats. Browser warnings/errors remained empty.
+
+
+## Damage taken and shielding meter — 15 October 2026
+
+Added Taken and Shielding as two additional compact tabs, moving the team toggle into the heading. Taken uses health conservation from replay starting HP, incoming effective heals and own passive regeneration; outgoing heals and shield absorption do not inflate it. Shielding reads the existing shields-generated counter, including opening grants and positive refresh gains. Its footer shows team absorption and live remaining shields; row tooltips give individual absorption and remaining shield. No combat rules or stored replay schema changed.
+
+All 105 tests pass. Across seeds 1, 7 and 42, Taken stays monotonic and each team's total matches the opposing team's health damage throughout the battle; tests also cover incoming/outgoing healing attribution, regeneration, injured starting HP, shield generation vs absorption, replay resets and opening grants.
+
+The seed-1 8v8 production-preview fight again reached 10.8s VERIFIED with checksum `2eebdd1b`. All 39 captured Taken/Shielding snapshots matched simulation ranks, rounded values and raw values/totals within 1e-8. Your team's leaders: Snorlax 3,868 taken / 1,721 shields generated. Opponent leaders: Arcanine 3,902 taken; Lapras 2,635 shields generated. Rewind restores 0 Taken and 781 opening shielding for your team. Team switching, row inspection and keyboard collapse remained functional, and no browser warnings/errors occurred. At 1280 × 720 and 1920 × 1080, the meter, inspector and replay controls remain separate; the viewport override was reset.
