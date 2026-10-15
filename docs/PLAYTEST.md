@@ -104,3 +104,14 @@ Seed 1, sixteen 2-star Pokémon, two items per unit (32 items total). Blue: Snor
 The first recorded run peaked at 36 number labels and eight cast labels, with names and numbers piled over the front line. Crowded desktop feedback now aggregates visible impacts by victim and damage/healing channel, shows event counts, places labels in free spaces, protects live vitals, and moves cast names into the left margin. Only three casts receive the heavy bloom layer at once; all basic attack paths and individual skill projectiles/impacts remain. Recovery ripples are limited to one per recipient, and hit flashes are softer. Normal smaller fights retain their existing feedback.
 
 Final browser runs at 1280 × 720 and 1920 × 1080 both reached VERIFIED with peak 19 number labels. Every sampled frame had zero number-to-number and zero number-to-live-vitals overlaps. The full-HD check first exposed a sprite-scale cap mismatch; the corrected protected regions follow the actual capped sprite scale. Console warnings/errors were empty. Deterministic audits for seeds 1, 7 and 42 preserve every eligible damage/healing value and event count, avoid label/health-bar collisions, and match their original result checksums. The GIF records the final seed-1 battle on the production preview.
+
+
+## Live desktop combat meter — 15 October 2026
+
+Added a compact right-margin Damage/Healing meter with team toggle, ranked sprites/bars, cumulative totals, leader marker and retained knocked-out entries. Rows open the existing inspector below the meter; collapse frees inspection space. Updates patch existing rows at 5 Hz, preserving sprite animations and keyboard focus as ranks change. Uses engine health-damage/effective-healing counters directly; no battle-rule changes.
+
+The same seed-1 8v8 fixture completed at 10.8s with VERIFIED checksum `2eebdd1b`. Captured 85 meter snapshots across damage/healing views: every displayed value and rank matched a simulation sought to the meter timestamp; raw values/totals agreed within 1e-8 (browser/Node floating-point precision). Blue damage leader: Charizard, 8,463; healing leader: Venusaur, 1,236. Opponent damage leader: Gengar, 5,205; healing leader: Vileplume, 675.
+
+Browser checks cover team toggle, row inspection, collapse/expand (including keyboard Space without resuming combat), final totals, and rewind to 0.0s clearing all eight rows. At 1280 × 720, meter ends at y385, inspector spans y393–588, and transport begins at y612, leaving the battlefield unobstructed. Unit tests cover metric separation, team filtering, KO retention, shares/bar scaling, zero values, final report agreement and replay reset/seeking.
+
+All 103 unit tests pass. At 1920 × 1080, meter/inspector/replay control bounds remain disjoint; the temporary viewport override was reset. The final GIF switches damage/healing during combat and clicks Venusaur’s meter row to inspect live stats. Browser warnings/errors remained empty.

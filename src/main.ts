@@ -9,6 +9,7 @@ import {battleReportHTML} from './report';
 import {spriteFacing} from './facing';
 import {mountSandbox} from './sandbox-ui';
 import {stressRecord} from './stress';
+import {mountBattleMeter} from './meter';
 import './style.css';
 import {BattleAudio} from './audio';
 import './reference.css';
@@ -56,6 +57,10 @@ const unitActions=document.createElement('div');unitActions.id='mobile-unit-acti
 const inspector=document.createElement('aside');inspector.id='desktop-inspector';inspector.className='hidden';inspector.setAttribute('aria-label','Pokémon and item inspection');document.querySelector('.center')!.append(inspector);
 const combatKey=document.createElement('div');combatKey.id='combat-key';combatKey.innerHTML='<span>Hit</span><span>◆ Skill</span><span>+ Heal</span><span>◈ Shield</span>';document.querySelector('.center')!.append(combatKey);
 let inspectedUid:number|null=null,inspectedItem:string|null=null,inspectionPinned=false,inspectionTick=0;
+const meterHost=document.createElement('aside');meterHost.id='battle-meter';meterHost.className='hidden';meterHost.setAttribute('aria-label','Live combat meter');document.querySelector('.center')!.append(meterHost);
+const battleMeter=mountBattleMeter(meterHost,uid=>inspectPokemon(uid));
+function refreshBattleMeter(){battleMeter.update(fighters,{visible:!mobileLayout()&&phase!=='prep'&&fighters.length>0,seconds:battleSession?.seconds??elapsed,state:phase==='result'||battleSession?.done?'FINAL':phase==='replay'&&replayPaused?'PAUSED':phase==='replay'?'REPLAY':'LIVE'});}
+
 
 const placement=document.createElement('div');placement.id='placement-grid';surface.append(placement);
 placement.onclick=e=>{const tile=(e.target as Element).closest<HTMLElement>('[data-place]');if(tile&&selected!==null){e.stopPropagation();move(selected,Number(tile.dataset.place),true);}};
@@ -112,7 +117,7 @@ function render(){
  $('battle').innerHTML=phase==='battle'?`<span>⚔</span> Battling <span class="battle-time">${Math.floor(elapsed)}s</span>`:phase==='result'?`Continue <span>→</span>`:g.lobby!.roundKind==='draft'?`<span>♧</span> Choose Pokémon <kbd>SPACE</kbd>`:`<span>⚔</span> Battle <kbd>SPACE</kbd>`;($('battle') as HTMLButtonElement).disabled=phase==='battle'||phase==='replay';
  const opponent=phase==='replay'&&battleSession?battleSession.record.initial.filter(f=>f.team).map(f=>({uid:f.uid,species:f.species,star:f.star,slot:f.slot,board:true})):opponentUnits(g);$('enemy-count').textContent=`${opponent.length} Pokémon · ${g.lobby?.roundKind==='neutral'?'Neutral round':'Trainer lineup'}`;$('opponent-name').textContent=g.lobby?.roundKind==='neutral'?'Wild Pokémon':g.lobby?.roundKind==='draft'?'Shared Pokémon draft':trainerName(g,g.lobby!.opponent);$('reward').textContent=String(5+streakBonus(g.streak));$('enemy-preview').innerHTML=opponent.map(u=>`<div title="${species(u.species).name}">${sprite(u.species)}${stars(u.star)}</div>`).join('');
  $('board-caption').textContent=phase==='replay'&&battleSession?`Replay · seed ${battleSession.record.seed} · ${battleSession.record.ruleset}`:phase==='battle'?'Your Pokémon battle automatically':phase==='result'?'Review your team and continue your adventure':selected?'Click a highlighted hex to place your Pokémon':'Drag Pokémon onto your side of the battlefield';
- ($('sell') as HTMLButtonElement).disabled=selected===null||phase!=='prep';renderEconomyGuide();renderUnits();renderEquipment();drawBoard();renderStandings();renderMobileControls();if(phase!=='replay')save();
+ ($('sell') as HTMLButtonElement).disabled=selected===null||phase!=='prep';renderEconomyGuide();renderUnits();renderEquipment();drawBoard();renderStandings();renderMobileControls();refreshBattleMeter();if(phase!=='replay')save();
 }
 function speciesForType(t:string){return ({Grass:1,Water:7,Fire:4,Electric:25,Poison:92,Normal:52,Psychic:63,Rock:74} as Record<string,number>)[t];}
 function renderUnits(){const list=phase==='prep'?[...g.units.filter(u=>u.board).map(u=>({...u,team:0})),...opponentUnits(g).map(u=>({...u,team:1}))]:[];
@@ -224,7 +229,7 @@ function frame(time:number){if(rotateQuery.matches){last=time;requestAnimationFr
   if(phase==='battle'){$('battle').innerHTML=`<span>⚔</span> Battling <span class="battle-time">${Math.floor(elapsed)}s</span>`;if(battleSession.done)finishBattle();}
   else{if(battleSession.steps%30===0||battleSession.done)renderReport([...fighters.filter(f=>!f.team)].sort((a,b)=>b.damage-a.damage));($('replay-seek') as HTMLInputElement).value=String(elapsed);const expected=battleSession.record.result;const verified=battleSession.done&&expected&&expected.checksum===battleSession.result().checksum;$('replay-time').textContent=`${elapsed.toFixed(1)}s${verified?' · VERIFIED':battleSession.done?expected?' · MISMATCH':' · FINISHED':''}`;if(battleSession.done){replayPaused=true;$('replay-pause').textContent='Play';}}
  }else hits=hits.filter(h=>(h.life-=dt)>0);
- if(time-inspectionTick>200){inspectionTick=time;refreshInspection();}battleFeedback();$('effects-layer').innerHTML=renderAttackEffects(hits,point,width,height,geometry().size,fighters.length>=12&&!mobileLayout(),fighters);requestAnimationFrame(frame);
+ if(time-inspectionTick>200){inspectionTick=time;refreshBattleMeter();refreshInspection();}battleFeedback();$('effects-layer').innerHTML=renderAttackEffects(hits,point,width,height,geometry().size,fighters.length>=12&&!mobileLayout(),fighters);requestAnimationFrame(frame);
 }
 function openReplayHistory(){if(phase==='battle')return toast('Finish your battle before opening replays.');showModal(`<small class="eyebrow">REPRODUCIBLE BATTLES</small><h2>Battle replays</h2><p>Every fight stores its seed and starting lineup. Playback never changes your adventure.</p><div class="replay-list">${replayRecords.length?replayRecords.map((r,i)=>`<button data-replay="${i}"><strong>Round ${r.round} · ${r.result?.winner===0?'Victory':r.result?.winner===1?'Defeat':'Draw'}</strong><small>Seed ${r.seed} · ${((r.result?.steps??0)/60).toFixed(1)}s · ${r.ruleset}</small><span>Watch →</span></button>`).join(''):'<p>Complete a battle to save your first replay.</p>'}</div>`);$('modal').querySelectorAll<HTMLButtonElement>('[data-replay]').forEach(button=>button.onclick=()=>startReplay(replayRecords[Number(button.dataset.replay)]));}
 function startReplay(record:BattleRecord){if(phase!=='replay'){replayReturn=phase;replaySavedSession=battleSession;}$('arena-flyout').classList.add('hidden');phase='replay';replayPaused=false;battleSession=new BattleSession(record);fighters=battleSession.fighters;hits=battleSession.hits;$('modal').classList.add('hidden');$('result').classList.add('hidden');$('replay-controls').classList.remove('hidden');($('replay-seek') as HTMLInputElement).max=String((record.result?.steps??3600)/60);$('replay-pause').textContent='Pause';render();}
