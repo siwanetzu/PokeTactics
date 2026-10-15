@@ -8,6 +8,7 @@ import {xpToNext,streakBonus,levelUpGame,interestGold} from './run';
 import {battleReportHTML} from './report';
 import {spriteFacing} from './facing';
 import {mountSandbox} from './sandbox-ui';
+import {stressRecord} from './stress';
 import './style.css';
 import {BattleAudio} from './audio';
 import './reference.css';
@@ -93,7 +94,7 @@ function types(id:number){return species(id).types.map(t=>`<span class="type-ico
 function stars(star:number){return `<span class="stars">${'★'.repeat(star)}</span>`;}
 function render(){
  const shownRound=phase==='replay'&&battleSession?battleSession.record.round:g.round;const displayUnits=phase==='replay'&&battleSession?battleSession.record.initial.filter(f=>!f.team).map(f=>({uid:f.uid,species:f.species,star:f.star,slot:f.slot,board:true})):g.units;
- $('health').textContent=`${g.health}`;$('healthbar').style.width=`${g.health}%`;$('round-label').textContent=`STAGE ${stageLabel(shownRound)} · ${g.lobby?.roundKind==='neutral'?'WILD POKÉMON':g.lobby?.roundKind==='draft'?'POKÉMON DRAFT':'TRAINER BATTLE'}`;
+ $('health').textContent=`${g.health}`;$('healthbar').style.width=`${g.health}%`;$('round-label').textContent=phase==='replay'&&battleSession?`REPLAY · SEED ${battleSession.record.seed} · ${battleSession.record.initial.filter(f=>!f.team).length} vs ${battleSession.record.initial.filter(f=>f.team).length}`:`STAGE ${stageLabel(shownRound)} · ${g.lobby?.roundKind==='neutral'?'WILD POKÉMON':g.lobby?.roundKind==='draft'?'POKÉMON DRAFT':'TRAINER BATTLE'}`;
  $('phase-label').textContent=phase==='replay'?'Battle replay':phase==='battle'?'The battle is on':phase==='result'?(won?'Victory! Well played.':'Regroup and try again'):g.lobby?.roundKind==='draft'?'Choose a Pokémon from the shared draft':g.lobby?.roundKind==='pvp'?`Prepare against ${trainerName(g,g.lobby.opponent)}`:'Prepare your team';
  $('phase-pill').textContent=phase==='replay'?'REPLAY':phase==='battle'?'IN COMBAT':phase==='result'?'ROUND COMPLETE':'PREPARATION';$('phase-pill').className=`phase-pill ${phase}`;
  $('round-path').innerHTML=Array.from({length:7},(_,i)=>`<span class="path-node ${i+1===Number(stageLabel(g.round).split('-')[1])?'current':''}" title="Stage round ${i+1}">${i===3?'♧':i===6?'◇':i+1}</span>${i<6?'<i></i>':''}`).join('');
@@ -126,7 +127,7 @@ function updateFighters(){for(const f of fighters){
  el.classList.toggle('inspected',inspectedUid===f.uid&&!inspector.classList.contains('hidden'));const watchedHit=[...hits].reverse().find(h=>h.attacker===inspectedUid&&h.primary);el.classList.toggle('inspect-targeted',!!watchedHit&&watchedHit.target===f.uid&&f.hp>0&&f.uid!==inspectedUid&&!inspector.classList.contains('hidden'));el.dataset.slot=String(f.slot);el.dataset.reservedSlot=f.moveTo===null?'':String(f.moveTo);
  el.style.left=`${p.x}px`;el.style.top=`${p.y}px`;el.style.opacity=visibleHp<=0?'0':'1';
  const impact=hits.some(h=>h.target===f.uid&&h.life/(h.duration??1)<=.66&&h.life/(h.duration??1)>.5);
- el.style.filter=impact?'brightness(1.65)':f.statuses.some(s=>s.kind==='poison')?'drop-shadow(0 0 4px #bb86ef)':f.shield>0?'drop-shadow(0 0 5px #9de0ff)':'';el.dataset.status=f.statuses.map(s=>s.kind).join(' ');el.style.zIndex=String(Math.floor(f.y*10)+20);
+ el.style.filter=impact?(fighters.length>=12&&!mobileLayout()?'brightness(1.18)':'brightness(1.65)'):f.statuses.some(s=>s.kind==='poison')?'drop-shadow(0 0 4px #bb86ef)':f.shield>0?'drop-shadow(0 0 5px #9de0ff)':'';el.dataset.status=f.statuses.map(s=>s.kind).join(' ');el.style.zIndex=String(Math.floor(f.y*10)+20);
  let lx=0,ly=0;
  if(attack){const to=point(attack.toX,attack.toY),dx=to.x-p.x,dy=to.y-p.y,d=Math.hypot(dx,dy)||1,age=1-attack.life/(attack.duration??1);
  const motion=age<.12?-Math.sin(age/.12*Math.PI)*2:Math.sin((age-.12)/.24*Math.PI)*5;
@@ -212,7 +213,7 @@ function animateDemo(dt:number){
  $('demo-actors').innerHTML=demoFighters.filter(f=>f.hp>0).map(f=>{const p=demoPoint(f.x,f.y);return `<div class="demo-actor ${f.team?'enemy':''}" style="left:${p.x}px;top:${p.y}px;--facing:${spriteFacing(f,demoFighters,demoHits)}">${sprite(f.species)}<small>${demoBattle?'':f.uid===900?species(f.species).name:f.statuses.map(s=>s.kind.toUpperCase()).join(' · ')||'TARGET'}</small>${f.shield>0?'<span class="demo-shield">◈</span>':''}</div>`;}).join('');
 }
 $('skill-lab').onclick=openSkillLab;
-$('battle-sandbox').onclick=()=>{if(phase==='battle')return toast('Finish your adventure battle before opening the sandbox.');showModal('<div id="sandbox-root"></div>');$('sandbox-root').closest('.modal-card')!.classList.add('sandbox-card');mountSandbox($('sandbox-root'));};
+$('battle-sandbox').onclick=()=>{if(phase==='battle')return toast('Finish your adventure battle before opening the sandbox.');showModal('<div class="stress-launch"><button id="stress-fight">8v8 mixed teams + items</button><small>Desktop stress test · 2 stars · 2 items each · uses the sandbox seed</small></div><div id="sandbox-root"></div>');$('sandbox-root').closest('.modal-card')!.classList.add('sandbox-card');mountSandbox($('sandbox-root'));$('stress-fight').onclick=()=>{const seed=Number(($('sandbox-seed') as HTMLInputElement).value);if(!Number.isInteger(seed)||seed<0||seed>0xffffffff)return toast('Choose a valid seed.');startReplay(stressRecord(seed));};};
 let combatTileSignature='';
 const soundedStarts=new WeakSet<Hit>(),soundedImpacts=new WeakSet<Hit>();
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -223,7 +224,7 @@ function frame(time:number){if(rotateQuery.matches){last=time;requestAnimationFr
   if(phase==='battle'){$('battle').innerHTML=`<span>⚔</span> Battling <span class="battle-time">${Math.floor(elapsed)}s</span>`;if(battleSession.done)finishBattle();}
   else{if(battleSession.steps%30===0||battleSession.done)renderReport([...fighters.filter(f=>!f.team)].sort((a,b)=>b.damage-a.damage));($('replay-seek') as HTMLInputElement).value=String(elapsed);const expected=battleSession.record.result;const verified=battleSession.done&&expected&&expected.checksum===battleSession.result().checksum;$('replay-time').textContent=`${elapsed.toFixed(1)}s${verified?' · VERIFIED':battleSession.done?expected?' · MISMATCH':' · FINISHED':''}`;if(battleSession.done){replayPaused=true;$('replay-pause').textContent='Play';}}
  }else hits=hits.filter(h=>(h.life-=dt)>0);
- if(time-inspectionTick>200){inspectionTick=time;refreshInspection();}battleFeedback();$('effects-layer').innerHTML=renderAttackEffects(hits,point,width,height,geometry().size);requestAnimationFrame(frame);
+ if(time-inspectionTick>200){inspectionTick=time;refreshInspection();}battleFeedback();$('effects-layer').innerHTML=renderAttackEffects(hits,point,width,height,geometry().size,fighters.length>=12&&!mobileLayout(),fighters);requestAnimationFrame(frame);
 }
 function openReplayHistory(){if(phase==='battle')return toast('Finish your battle before opening replays.');showModal(`<small class="eyebrow">REPRODUCIBLE BATTLES</small><h2>Battle replays</h2><p>Every fight stores its seed and starting lineup. Playback never changes your adventure.</p><div class="replay-list">${replayRecords.length?replayRecords.map((r,i)=>`<button data-replay="${i}"><strong>Round ${r.round} · ${r.result?.winner===0?'Victory':r.result?.winner===1?'Defeat':'Draw'}</strong><small>Seed ${r.seed} · ${((r.result?.steps??0)/60).toFixed(1)}s · ${r.ruleset}</small><span>Watch →</span></button>`).join(''):'<p>Complete a battle to save your first replay.</p>'}</div>`);$('modal').querySelectorAll<HTMLButtonElement>('[data-replay]').forEach(button=>button.onclick=()=>startReplay(replayRecords[Number(button.dataset.replay)]));}
 function startReplay(record:BattleRecord){if(phase!=='replay'){replayReturn=phase;replaySavedSession=battleSession;}$('arena-flyout').classList.add('hidden');phase='replay';replayPaused=false;battleSession=new BattleSession(record);fighters=battleSession.fighters;hits=battleSession.hits;$('modal').classList.add('hidden');$('result').classList.add('hidden');$('replay-controls').classList.remove('hidden');($('replay-seek') as HTMLInputElement).max=String((record.result?.steps??3600)/60);$('replay-pause').textContent='Pause';render();}

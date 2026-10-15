@@ -18,3 +18,7 @@
  .fighter .unit-health{width:46px;height:6px}.unit-shield{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:46px;height:3px;background:#15364a}.unit-shield i{display:block;height:100%;background:#a0eaff;box-shadow:0 0 3px #a0eaff66}.fighter .unit-state{font-size:10px}
  .board-unit.inspected:after{outline:2px solid #ffe19a;outline-offset:2px}.board-unit.inspect-targeted:after{outline:2px dashed #f9b09c;outline-offset:3px}.fighter.inspected .unit-name{display:block;color:#ffe7a3}
 }
+
+.stress-launch{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #a79568;border-radius:7px;background:#263c51;margin-bottom:16px}.stress-launch button{padding:10px;background:#5a754d;color:#f4edca;border:1px solid #d1d29b;border-radius:5px;white-space:nowrap}.stress-launch small{font-size:11px;color:#b8cbd3}
+
+#effects-layer .crowded-number{transform:translate(-50%,-50%);font-size:17px;line-height:23px;height:23px;text-align:center;background:#132637aa;border-radius:4px;box-shadow:0 1px 2px #07142188}#effects-layer .crowded-number small{display:inline;font-size:8px;letter-spacing:0;margin-left:3px;vertical-align:2px}#effects-layer .crowded-cast{width:164px;height:28px;line-height:12px;font-size:10px;padding:2px 6px;overflow:hidden}#effects-layer .crowded-cast small{font-size:8px;line-height:10px}

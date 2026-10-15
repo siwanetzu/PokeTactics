@@ -1,4 +1,5 @@
-import {species,type Hit} from './engine.ts';
+import {species,type Hit,type Fighter} from './engine.ts';
+import {crowdedFeedback,healthBarAreas} from './feedback.ts';
 type Profile={shape:string;color:string;accent:string};
 export const abilityEffects:Record<number,Profile>={
 45:{shape:'petals',color:'#f5b8ed',accent:'#e2ffa1'},135:{shape:'needles',color:'#ffe88a',accent:'#fffdf0'},59:{shape:'firefang',color:'#ff9958',accent:'#ffe48e'},131:{shape:'ice',color:'#9beaff',accent:'#f0ffff'},
@@ -17,15 +18,16 @@ export const abilityEffects:Record<number,Profile>={
 const line=(x:number,y:number,xx:number,yy:number,color:string,width=2)=>`<line x1="${x}" y1="${y}" x2="${xx}" y2="${yy}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`;
 const ring=(x:number,y:number,r:number,color:string,width=2)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${color}" stroke-width="${width}"/>`;
 const star=(x:number,y:number,r:number,color:string)=>{const points=Array.from({length:10},(_,i)=>{const a=i*Math.PI/5-Math.PI/2,rr=i%2?r*.4:r;return `${x+Math.cos(a)*rr},${y+Math.sin(a)*rr}`;}).join(' ');return `<polygon points="${points}" fill="${color}"/>`;};
-export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},width:number,height:number,size:number){
- let drawing='',labels='';const lanes=new Map<number,number>();
+export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:number;y:number},width:number,height:number,size:number,crowded=false,actors:Fighter[]=[]){
+ let drawing='',labels='';const lanes=new Map<number,number>(),healed=new Set<number>();
  for(const original of hits){const h={...original,life:original.life/(original.duration??1)};const age=1-h.life,cast=!!h.ability,profile=abilityEffects[h.species],color=cast?profile.color:h.color,accent=cast?profile.accent:'#fff1d3';const a=point(h.x,h.y),b=point(h.toX,h.toY);a.y-=size*.22;b.y-=size*.22;const progress=Math.max(0,Math.min(1,(age-.12)/.22)),x=a.x+(b.x-a.x)*progress,y=a.y+(b.y-a.y)*progress;let art='';
   const lane=lanes.get(h.target)??0;lanes.set(h.target,lane+1);
   const labelX=Math.max(25,Math.min(width-25,b.x+(h.kind==='heal'?22:-12)+(lane%3-1)*18)),labelY=Math.max(18,b.y-size*.9-(lane%3)*15-Math.max(0,age-.34)*32);
   if(h.kind==='heal'){
+   if(crowded&&healed.has(h.target))continue;healed.add(h.target);
    const fade=Math.min(1,h.life*3),r=8+age*18;
    drawing+=`<g class="healing-vfx" opacity="${fade}">${line(a.x,a.y,b.x,b.y,'#91f7ba',1.5)}${ring(b.x,b.y,r,'#81f7b4',2)}<path d="M ${b.x-5} ${b.y-12-age*14} h 10 M ${b.x} ${b.y-17-age*14} v 10" stroke="#c4ffdb" stroke-width="3" stroke-linecap="round"/></g>`;
-   if(h.value>0)labels+=`<div class="damage-number healing-number" style="left:${labelX}px;top:${labelY}px;opacity:${fade}">+${Math.round(h.value)} <small>HEAL</small></div>`;
+   if(h.value>0&&!crowded)labels+=`<div class="damage-number healing-number" style="left:${labelX}px;top:${labelY}px;opacity:${fade}">+${Math.round(h.value)} <small>HEAL</small></div>`;
    continue;
   }
   if(cast&&h.primary&&age<.36){art+=`<g class="ability-telegraph" opacity="${.6*(1-age/.5)}"><path d="M ${a.x} ${a.y} L ${b.x} ${b.y}" stroke="${color}" stroke-width="2" stroke-dasharray="4 5" fill="none"/>${ring(b.x,b.y,size*.43,color,2)}</g>`;}
@@ -53,13 +55,23 @@ export function renderAttackEffects(hits:Hit[],point:(x:number,y:number)=>{x:num
    else if(['shadow','night'].includes(shape)){art+=`<circle cx="${x}" cy="${y}" r="${shape==='night'?11:8}" fill="#44305f" stroke="${color}" stroke-width="3"/>`+ring(x,y,13,accent,1);}
    else art+=`<circle cx="${x}" cy="${y}" r="3" fill="${accent}" stroke="${color}" stroke-width="2"/>`;
   }
-  if(age>=.34){const t=(age-.34)/.66,opacity=1-t;art+=`<g opacity="${opacity}">`+ring(b.x,b.y,5+t*(cast?24:12),color,cast?3:1.5);for(let i=0;i<(cast?8:4);i++){const angle=i*Math.PI*2/(cast?8:4)+h.species*.2;const px=b.x+Math.cos(angle)*(8+t*22),py=b.y+Math.sin(angle)*(8+t*22);art+=star(px,py,cast?3:1.7,i%2?accent:color);}if(cast&&h.primary){if(profile.shape==='fireblast')art+=star(b.x,b.y,18*(1-t),color);if(profile.shape==='night')art+=`<ellipse cx="${b.x}" cy="${b.y}" rx="${12+t*15}" ry="${8+t*10}" fill="#49345d77"/>`;if(profile.shape==='confusion')art+=ring(b.x,b.y,8+t*10,accent);if(profile.shape==='fang')art+=`<path d="M ${b.x-9} ${b.y-8} L ${b.x-6} ${b.y+4} L ${b.x-3} ${b.y-8} M ${b.x+3} ${b.y-8} L ${b.x+6} ${b.y+4} L ${b.x+9} ${b.y-8}" fill="${accent}"/>`;if(profile.shape==='drain'){const xx=b.x+(a.x-b.x)*t,yy=b.y+(a.y-b.y)*t;art+=`<circle cx="${xx}" cy="${yy}" r="4" fill="${accent}"/>`+ring(a.x,a.y,10+t*10,color);}}art+='</g>';
-   if(h.value>0)labels+=`<div class="damage-number ${cast?'ability-hit':'attack-number'}" style="left:${labelX}px;top:${labelY}px;opacity:${Math.min(1,opacity*2)}">${Math.round(h.value)}${cast?'<small>SKILL</small>':''}</div>`;
+  if(age>=.34){const t=(age-.34)/.66,opacity=1-t;art+=`<g opacity="${opacity}">`+ring(b.x,b.y,5+t*(cast?24:12),color,cast?3:1.5);for(let i=0;i<(crowded?(h.primary?3:0):cast?8:4);i++){const angle=i*Math.PI*2/(cast?8:4)+h.species*.2;const px=b.x+Math.cos(angle)*(8+t*22),py=b.y+Math.sin(angle)*(8+t*22);art+=star(px,py,cast?3:1.7,i%2?accent:color);}if(cast&&h.primary){if(profile.shape==='fireblast')art+=star(b.x,b.y,18*(1-t),color);if(profile.shape==='night')art+=`<ellipse cx="${b.x}" cy="${b.y}" rx="${12+t*15}" ry="${8+t*10}" fill="#49345d77"/>`;if(profile.shape==='confusion')art+=ring(b.x,b.y,8+t*10,accent);if(profile.shape==='fang')art+=`<path d="M ${b.x-9} ${b.y-8} L ${b.x-6} ${b.y+4} L ${b.x-3} ${b.y-8} M ${b.x+3} ${b.y-8} L ${b.x+6} ${b.y+4} L ${b.x+9} ${b.y-8}" fill="${accent}"/>`;if(profile.shape==='drain'){const xx=b.x+(a.x-b.x)*t,yy=b.y+(a.y-b.y)*t;art+=`<circle cx="${xx}" cy="${yy}" r="4" fill="${accent}"/>`+ring(a.x,a.y,10+t*10,color);}}art+='</g>';
+   if(h.value>0&&!crowded)labels+=`<div class="damage-number ${cast?'ability-hit':'attack-number'}" style="left:${labelX}px;top:${labelY}px;opacity:${Math.min(1,opacity*2)}">${Math.round(h.value)}${cast?'<small>SKILL</small>':''}</div>`;
   }
-  if(cast&&h.primary&&age<.72)labels+=`<div class="cast-label" style="left:${Math.max(85,Math.min(width-85,a.x))}px;top:${Math.max(4,a.y-size*1.5)}px;color:${color};opacity:${Math.min(1,h.life*4)}"><small>${species(h.species).name}</small>${h.ability}</div>`;
-  drawing+=art;
+  if(!crowded&&cast&&h.primary&&age<.72)labels+=`<div class="cast-label" style="left:${Math.max(85,Math.min(width-85,a.x))}px;top:${Math.max(4,a.y-size*1.5)}px;color:${color};opacity:${Math.min(1,h.life*4)}"><small>${species(h.species).name}</small>${h.ability}</div>`;
+  drawing+=crowded?`<g opacity=".72">${art}</g>`:art;
  }
- return `<svg class="combat-vfx" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true"><defs><filter id="spell-bloom" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${epicEffects(hits,point,size)}${drawing}</svg>${labels}`;
+ if(crowded){
+  for(const label of crowdedFeedback(hits,point,width,height,size,healthBarAreas(actors,point,size))){const color=label.kind==='heal'?'#a2ffbc':label.ability?'#ffc879':'#fff5df';
+   if(Math.hypot(label.x-label.anchorX,label.y-label.anchorY)>65)drawing+=line(label.x,label.y+9,label.anchorX,label.anchorY,color,.7);
+   labels+=`<div class="damage-number crowded-number ${label.kind==='heal'?'healing-number':label.ability?'ability-hit':'attack-number'}" data-target="${label.target}" data-events="${label.count}" style="left:${label.x}px;top:${label.y}px;width:${label.width}px">${label.kind==='heal'?'+':''}${label.value}<small>${label.kind==='heal'?'HEAL':label.ability?'DMG':'HIT'}${label.count>1?' ×'+label.count:''}</small></div>`;
+  }
+  const casts=new Map<number,Hit>();for(const h of hits){const age=1-h.life/(h.duration??1);if(!h.ability||!h.primary||age>=.72)continue;const old=casts.get(h.attacker);if(!old||h.life/(h.duration??1)>old.life/(old.duration??1))casts.set(h.attacker,h);}
+  const feedLeft=Math.max(90,point(0,0).x-size-160),rows=Math.max(1,Math.min(8,Math.floor((height-150)/30)));
+  [...casts.values()].slice(-rows).forEach((h,i)=>labels+=`<div class="cast-label crowded-cast" style="left:${feedLeft}px;top:${10+i*30}px;color:${abilityEffects[h.species].color}"><small>${species(h.species).name}</small>${h.ability}</div>`);
+ }
+ const cinematic=crowded?hits.filter(h=>h.primary&&h.ability).slice(-3):hits;
+ return `<svg class="combat-vfx" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true"><defs><filter id="spell-bloom" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${epicEffects(cinematic,point,size)}${drawing}</svg>${labels}`;
 }
 
 /** Cinematic layers share the same deterministic timeline as hit feedback. */
